@@ -1,6 +1,6 @@
 # LLMPerf - Professional LLM Performance Testing Tool
 
-English | [中文](README.zh.md)
+English | [中文](README_zh.md)
 
 ## Project Overview
 

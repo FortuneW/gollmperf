@@ -1,3 +1,11 @@
+<!-- markdownlint-disable MD001 MD041 -->
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/assets/logos/png.jpg">
+    <img alt="gollmperf" src="./docs/assets/logos/logo1.png" width=55%>
+  </picture>
+</p>
+
 # gollmperf - Professional LLM Performance Testing Tool
 
 English | [中文](README_zh.md)

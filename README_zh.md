@@ -139,11 +139,15 @@ gollmperf/
 ### 使用示例
 
 ```bash
+git clone https://github.com/FortuneW/gollmperf.git
+cd gollmperf
 go mod tidy
 go build
+
 export LLM_API_ENDPOINT="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
 export LLM_API_KEY="sk-xxx"
 export LLM_MODEL_NAME="qwen-plus"
+
 ./gollmperf run -c configs/example.yaml
 ```
 

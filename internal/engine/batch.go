@@ -3,8 +3,8 @@ package engine
 import (
 	"sync"
 
+	"github.com/FortuneW/gollmperf/internal/provider"
 	"github.com/FortuneW/qlog"
-	"github.com/user/llmperf/internal/provider"
 )
 
 var batchLog = qlog.GetRLog("engine.batch")

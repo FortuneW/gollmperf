@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/FortuneW/gollmperf/cmd"
 	"github.com/FortuneW/qlog"
-	"github.com/user/llmperf/cmd"
 )
 
 func init() {

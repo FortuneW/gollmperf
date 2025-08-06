@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/user/llmperf/internal/config"
-	"github.com/user/llmperf/internal/provider"
-	"github.com/user/llmperf/internal/utils"
+	"github.com/FortuneW/gollmperf/internal/config"
+	"github.com/FortuneW/gollmperf/internal/provider"
+	"github.com/FortuneW/gollmperf/internal/utils"
 )
 
 // TestContext holds the context for running tests

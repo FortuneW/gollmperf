@@ -1,10 +1,10 @@
-# LLMPerf - Professional LLM Performance Testing Tool
+# gollmperf - Professional LLM Performance Testing Tool
 
 English | [中文](README_zh.md)
 
 ## Project Overview
 
-LLMPerf is a professional-grade Large Language Model (LLM) performance testing tool designed to provide accurate and comprehensive LLM performance evaluation. The tool supports multiple LLM providers, offers multi-dimensional performance metrics, and features enterprise-level testing capabilities.
+gollmperf is a professional-grade Large Language Model (LLM) performance testing tool designed to provide accurate and comprehensive LLM performance evaluation. The tool supports multiple LLM providers, offers multi-dimensional performance metrics, and features enterprise-level testing capabilities.
 
 ## Core Features
 
@@ -79,7 +79,7 @@ LLMPerf is a professional-grade Large Language Model (LLM) performance testing t
 ## Project Structure
 
 ```
-llmperf/
+gollmperf/
 ├── cmd/                 # Command-line interface
 ├── configs/             # Configuration file examples
 ├── examples/            # Sample data
@@ -101,19 +101,19 @@ llmperf/
 
 ```bash
 # Using configuration file for batch mode
-./llmperf run --config ./configs/example.yaml
+./gollmperf run --config ./configs/example.yaml
 ```
 
 ### Stress Testing
 
 ```bash
 # Run stress test mode with --stress flag
-./llmperf run --stress --config ./configs/example.yaml
+./gollmperf run --stress --config ./configs/example.yaml
 ```
 
 ### Command args can override config file fields
 
-`./llmperf run -h`
+`./gollmperf run -h`
 
 ```bash
   -k, --apikey string     API key
@@ -126,14 +126,14 @@ llmperf/
 
 ```bash
 # Command args override config file fields
-./llmperf run --config ./configs/example.yaml --model gpt-3.5-turbo --dataset ./examples/test_cases.jsonl --report result.json --format json
+./gollmperf run --config ./configs/example.yaml --model gpt-3.5-turbo --dataset ./examples/test_cases.jsonl --report result.json --format json
 ```
 
 ### Comparative Testing
 
 ```bash
 # Comparative testing is not yet implemented but planned for future releases
-# ./llmperf compare --configs gpt35.yaml,gpt4.yaml,claude.yaml
+# ./gollmperf compare --configs gpt35.yaml,gpt4.yaml,claude.yaml
 ```
 
 
@@ -145,13 +145,13 @@ go build
 export LLM_API_ENDPOINT="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
 export LLM_API_KEY="sk-xxx"
 export LLM_MODEL_NAME="qwen-plus"
-./llmperf run -c configs/example.yaml
+./gollmperf run -c configs/example.yaml
 ```
 
 The results are as follows:
 
 ``` bash
-[INF] 2025-08-06T11:13:15.830Z [reporter] ========== LLMPerf Performance Report ==========
+[INF] 2025-08-06T11:13:15.830Z [reporter] ========== gollmperf Performance Report ==========
 [INF] 2025-08-06T11:13:15.830Z [reporter] Total Duration: 4.212978738s
 [INF] 2025-08-06T11:13:15.830Z [reporter] Total Requests: 5
 [INF] 2025-08-06T11:13:15.830Z [reporter] Successful Requests: 5
@@ -175,7 +175,7 @@ The results are as follows:
 ## Configuration Example
 
 ```yaml
-# Example configuration for LLMPerf
+# Example configuration for gollmperf
 
 # Test configuration
 test:
@@ -287,7 +287,7 @@ The project has completed core functionality development, including:
 
 ## Summary
 
-LLMPerf provides a professional, accurate, and user-friendly solution for LLM performance testing. Through modular design and a clear architecture, the tool not only meets current testing requirements but also has good extensibility to adapt to future testing scenarios and needs.
+gollmperf provides a professional, accurate, and user-friendly solution for LLM performance testing. Through modular design and a clear architecture, the tool not only meets current testing requirements but also has good extensibility to adapt to future testing scenarios and needs.
 
 ## License
 

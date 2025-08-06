@@ -1,6 +1,6 @@
-# Contributing to LLMPerf
+# Contributing to gollmperf
 
-We welcome contributions to LLMPerf! Whether you're reporting bugs, suggesting new features, or submitting code changes, your help is valuable.
+We welcome contributions to gollmperf! Whether you're reporting bugs, suggesting new features, or submitting code changes, your help is valuable.
 
 ## Reporting Bugs
 
@@ -23,7 +23,7 @@ We're always open to new ideas! To suggest a feature:
 
 ### Getting Started
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/FortuneW/llmperf.git`
+2. Clone your fork: `git clone https://github.com/FortuneW/gollmperf.git`
 3. Create a new branch for your changes: `git checkout -b feature/your-feature-name`
 4. Make your changes
 5. Test your changes

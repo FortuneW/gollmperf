@@ -4,8 +4,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/FortuneW/gollmperf/internal/provider"
 	"github.com/FortuneW/qlog"
-	"github.com/user/llmperf/internal/provider"
 )
 
 var stressLog = qlog.GetRLog("engine.stress")

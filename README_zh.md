@@ -1,10 +1,10 @@
-# LLMPerf - 专业LLM性能测试工具
+# gollmperf - 专业LLM性能测试工具
 
 [English](README.md) | 中文
 
 ## 项目概述
 
-LLMPerf是一个专业级的大语言模型(LLM)性能测试工具，旨在提供准确、全面的LLM性能评估。该工具支持多种LLM提供商，提供多维度性能指标，并具备企业级的测试能力。
+gollmperf是一个专业级的大语言模型(LLM)性能测试工具，旨在提供准确、全面的LLM性能评估。该工具支持多种LLM提供商，提供多维度性能指标，并具备企业级的测试能力。
 
 ## 核心功能特性
 
@@ -79,7 +79,7 @@ LLMPerf是一个专业级的大语言模型(LLM)性能测试工具，旨在提�
 ## 项目结构
 
 ```
-llmperf/
+gollmperf/
 ├── cmd/                 # 命令行接口
 ├── configs/             # 配置文件示例
 ├── examples/            # 示例数据
@@ -101,19 +101,19 @@ llmperf/
 
 ```bash
 # 使用配置文件进行批量测试
-./llmperf run --config ./configs/example.yaml
+./gollmperf run --config ./configs/example.yaml
 ```
 
 ### 压力测试
 
 ```bash
 # 使用--stress参数运行压力测试模式
-./llmperf run --stress --config ./configs/example.yaml
+./gollmperf run --stress --config ./configs/example.yaml
 ```
 
 ### 命令行参数可以覆盖配置文件字段
 
-`./llmperf run -h`
+`./gollmperf run -h`
 
 ```bash
   -k, --apikey string     API密钥
@@ -126,14 +126,14 @@ llmperf/
 
 ```bash
 # 命令行参数覆盖配置文件字段
-./llmperf run --config ./configs/example.yaml --model gpt-3.5-turbo --dataset ./examples/test_cases.jsonl --report result.json --format json
+./gollmperf run --config ./configs/example.yaml --model gpt-3.5-turbo --dataset ./examples/test_cases.jsonl --report result.json --format json
 ```
 
 ### 对比测试
 
 ```bash
 # 对比测试尚未实现，计划在后续版本中添加
-# ./llmperf compare --configs gpt35.yaml,gpt4.yaml,claude.yaml
+# ./gollmperf compare --configs gpt35.yaml,gpt4.yaml,claude.yaml
 ```
 
 ### 使用示例
@@ -144,13 +144,13 @@ go build
 export LLM_API_ENDPOINT="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
 export LLM_API_KEY="sk-xxx"
 export LLM_MODEL_NAME="qwen-plus"
-./llmperf run -c configs/example.yaml
+./gollmperf run -c configs/example.yaml
 ```
 
 得到结果如下：
 
 ``` bash
-[INF] 2025-08-06T11:13:15.830Z [reporter] ========== LLMPerf Performance Report ==========
+[INF] 2025-08-06T11:13:15.830Z [reporter] ========== gollmperf Performance Report ==========
 [INF] 2025-08-06T11:13:15.830Z [reporter] Total Duration: 4.212978738s
 [INF] 2025-08-06T11:13:15.830Z [reporter] Total Requests: 5
 [INF] 2025-08-06T11:13:15.830Z [reporter] Successful Requests: 5
@@ -174,7 +174,7 @@ export LLM_MODEL_NAME="qwen-plus"
 ## 配置文件示例
 
 ```yaml
-# Example configuration for LLMPerf
+# Example configuration for gollmperf
 
 # 测试配置
 test:
@@ -286,7 +286,7 @@ output:
 
 ## 总结
 
-LLMPerf为LLM性能测试提供了一个专业、准确、易用的解决方案。通过模块化设计和清晰的架构，该工具不仅满足了当前的测试需求，还具备了良好的扩展性，可以适应未来更多的测试场景和需求。
+gollmperf为LLM性能测试提供了一个专业、准确、易用的解决方案。通过模块化设计和清晰的架构，该工具不仅满足了当前的测试需求，还具备了良好的扩展性，可以适应未来更多的测试场景和需求。
 
 ## 许可证
 

@@ -1,4 +1,4 @@
-module github.com/user/llmperf
+module github.com/FortuneW/gollmperf
 
 go 1.23.0
 

@@ -7,7 +7,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/user/llmperf/internal/collector"
+	"github.com/FortuneW/gollmperf/internal/collector"
 )
 
 // Duration is a wrapper around time.Duration that marshals to milliseconds in JSON

@@ -3,7 +3,7 @@ package collector
 import (
 	"time"
 
-	"github.com/user/llmperf/internal/engine"
+	"github.com/FortuneW/gollmperf/internal/engine"
 )
 
 // Collector collects and stores test results

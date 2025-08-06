@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/FortuneW/gollmperf/internal/config"
+	"github.com/FortuneW/gollmperf/internal/provider"
 	"github.com/FortuneW/qlog"
-	"github.com/user/llmperf/internal/config"
-	"github.com/user/llmperf/internal/provider"
 )
 
 // Engine is the main test engine

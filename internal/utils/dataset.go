@@ -7,7 +7,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/user/llmperf/internal/provider"
+	"github.com/FortuneW/gollmperf/internal/provider"
 )
 
 var bufferPool = sync.Pool{

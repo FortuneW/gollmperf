@@ -6,7 +6,7 @@
 *.dylib
 *.out
 *.app
-llmperf
+gollmperf
 
 # Build output
 bin/

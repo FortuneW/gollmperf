@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/FortuneW/gollmperf/internal/analyzer"
+	"github.com/FortuneW/gollmperf/internal/collector"
+	"github.com/FortuneW/gollmperf/internal/engine"
+	"github.com/FortuneW/gollmperf/internal/reporter"
 	"github.com/spf13/cobra"
-	"github.com/user/llmperf/internal/analyzer"
-	"github.com/user/llmperf/internal/collector"
-	"github.com/user/llmperf/internal/engine"
-	"github.com/user/llmperf/internal/reporter"
 )
 
 var runCmd = &cobra.Command{

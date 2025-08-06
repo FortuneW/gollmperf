@@ -3,7 +3,7 @@ package engine
 import (
 	"sync"
 
-	"github.com/user/llmperf/internal/provider"
+	"github.com/FortuneW/gollmperf/internal/provider"
 )
 
 // workerResult represents a result from a worker with its index

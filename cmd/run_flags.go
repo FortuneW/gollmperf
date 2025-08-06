@@ -3,7 +3,7 @@ package cmd
 import (
 	"encoding/json"
 
-	"github.com/user/llmperf/internal/config"
+	"github.com/FortuneW/gollmperf/internal/config"
 )
 
 // RunFlags holds the command line flags for the run command

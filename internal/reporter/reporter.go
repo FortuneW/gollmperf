@@ -8,8 +8,8 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/FortuneW/gollmperf/internal/analyzer"
 	"github.com/FortuneW/qlog"
-	"github.com/user/llmperf/internal/analyzer"
 )
 
 var mlog = qlog.GetRLog("reporter")
@@ -28,7 +28,7 @@ func NewReporter(metrics *analyzer.Metrics) *Reporter {
 
 // GenerateConsoleReport generates a console report
 func (r *Reporter) GenerateConsoleReport() {
-	mlog.Info("========== LLMPerf Performance Report ==========")
+	mlog.Info("========== gollmperf Performance Report ==========")
 	mlog.Infof("Total Duration: %v", r.metrics.TotalDuration)
 	mlog.Infof("Total Requests: %d", r.metrics.TotalRequests)
 	mlog.Infof("Successful Requests: %d", r.metrics.SuccessfulRequests)
@@ -133,7 +133,7 @@ func (r *Reporter) GenerateHTMLReport(filename string) error {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>LLMPerf Performance Report</title>
+    <title>gollmperf Performance Report</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         h1, h2 { color: #333; }
@@ -144,7 +144,7 @@ func (r *Reporter) GenerateHTMLReport(filename string) error {
     </style>
 </head>
 <body>
-    <h1>LLMPerf Performance Report</h1>
+    <h1>gollmperf Performance Report</h1>
     
     <h2>Summary</h2>
     <table>

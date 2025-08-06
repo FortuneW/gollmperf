@@ -1,0 +1,91 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
+*.app
+llmperf
+
+# Build output
+bin/
+build/
+dist/
+release/
+
+# IDE files
+## VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+## IntelliJ/GoLand
+.idea/
+*.iws
+*.iml
+*.ipr
+
+## Vim/Neovim
+*.swp
+*.swo
+*~
+
+## Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+## Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+## Atom
+.atom/
+.symbols/
+
+## Visual Studio
+*.sln
+*.csproj
+*.vcxproj
+*.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Go specific
+*.test
+/vendor/
+/go.work
+/go.work.sum
+
+# Coverage output
+coverage.txt
+coverage.html
+
+# Distribution archives
+*.tar.gz
+*.zip
+
+# custom
+result.*
+CLAUDE.md

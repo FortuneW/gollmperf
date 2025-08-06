@@ -1,0 +1,57 @@
+# Example configuration for LLMPerf
+
+# Test configuration
+test:
+  # Duration of the test
+  duration: 60s
+  
+  # Warmup period before starting measurements
+  warmup: 10s
+  
+  # Number of concurrent requests
+  concurrency: 10
+  
+  # Timeout for each request
+  timeout: 30s
+
+# Model configuration
+model:
+  # Model name
+  name: ${LLM_MODEL_NAME}
+  
+  # Provider (openai, qwen, etc.)
+  provider: openai
+  
+  # API endpoint (optional, uses default if not specified)
+  endpoint: ${LLM_API_ENDPOINT}
+
+  # API key (required)
+  api_key: ${LLM_API_KEY}
+
+  # http headers, with any additional header fields
+  headers:
+    Content-Type: application/json
+
+  # http request params template, with any additional fields
+  params_template:
+    stream: true
+    stream_options:
+      include_usage: true
+    extra_body:
+      enable_thinking: false
+
+# Dataset configuration
+dataset:
+  # Type of dataset (jsonl)
+  type: jsonl
+  
+  # Path to dataset file
+  path: ./examples/test_cases.jsonl
+
+# Output configuration
+output:
+  # Output formats (json, csv, html)
+  format: html
+
+  # Output directory
+  path: ./results

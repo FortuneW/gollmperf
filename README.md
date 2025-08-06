@@ -230,8 +230,8 @@ output:
   # Output formats (json, csv, html)
   format: html
     
-  # Output directory
-  path: ./results
+  # Output file path
+  path: ./results/report.html
 ```
 
 ## Professional Features

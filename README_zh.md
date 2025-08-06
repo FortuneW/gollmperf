@@ -229,8 +229,8 @@ output:
   # 输出格式 (json, csv, html)
   format: html
     
-  # 输出目录
-  path: ./results
+  # Output file path
+  path: ./results/report.html
 ```
 
 ## 专业特性

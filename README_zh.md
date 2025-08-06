@@ -136,6 +136,41 @@ llmperf/
 # ./llmperf compare --configs gpt35.yaml,gpt4.yaml,claude.yaml
 ```
 
+### 使用示例
+
+```bash
+go mod tidy
+go build
+export LLM_API_ENDPOINT="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+export LLM_API_KEY="sk-xxx"
+export LLM_MODEL_NAME="qwen-plus"
+./llmperf run -c configs/example.yaml
+```
+
+得到结果如下：
+
+``` bash
+[INF] 2025-08-06T11:13:15.830Z [reporter] ========== LLMPerf Performance Report ==========
+[INF] 2025-08-06T11:13:15.830Z [reporter] Total Duration: 4.212978738s
+[INF] 2025-08-06T11:13:15.830Z [reporter] Total Requests: 5
+[INF] 2025-08-06T11:13:15.830Z [reporter] Successful Requests: 5
+[INF] 2025-08-06T11:13:15.830Z [reporter] Failed Requests: 0
+[INF] 2025-08-06T11:13:15.830Z [reporter] Success Rate: 100.00%
+[INF] 2025-08-06T11:13:15.830Z [reporter] QPS: 1.19
+[INF] 2025-08-06T11:13:15.830Z [reporter] Tokens per second: 197.01
+[INF] 2025-08-06T11:13:15.830Z [reporter] Average Latency: 3.650148772s
+[INF] 2025-08-06T11:13:15.830Z [reporter] Latency P50: 3.822069212s
+[INF] 2025-08-06T11:13:15.830Z [reporter] Latency P90: 4.212863638s
+[INF] 2025-08-06T11:13:15.830Z [reporter] Latency P99: 4.212863638s
+[INF] 2025-08-06T11:13:15.830Z [reporter] Average Request Tokens: 22.00
+[INF] 2025-08-06T11:13:15.830Z [reporter] Average Response Tokens: 144.00
+[INF] 2025-08-06T11:13:15.830Z [reporter] Average First Token Latency: 488.073612ms
+[INF] 2025-08-06T11:13:15.830Z [reporter] First Token Latency P50: 512.180236ms
+[INF] 2025-08-06T11:13:15.830Z [reporter] First Token Latency P90: 583.377086ms
+[INF] 2025-08-06T11:13:15.830Z [reporter] First Token Latency P99: 583.377086ms
+```
+**默认当前目录得到一个 ./results/report.html 报告文件**
+
 ## 配置文件示例
 
 ```yaml

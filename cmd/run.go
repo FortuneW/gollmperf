@@ -19,9 +19,6 @@ var runCmd = &cobra.Command{
 		// Initialize test context
 		testCtx := InitializeTest(runFlags)
 
-		// Debug runFlags
-		mlog.Infof("RunFlags: %s", runFlags.String())
-
 		// Run test and get collector
 		col, err := runTest(testCtx, runFlags.IsStress)
 		if err != nil {
@@ -41,7 +38,7 @@ var runCmd = &cobra.Command{
 
 		// Generate file report if requested
 		if err := r.GenerateFileReport(testCtx.Config.Output.Path, testCtx.Config.Output.Format); err != nil {
-			mlog.Errorf("failed to generate file report (%s format): %w", testCtx.Config.Output.Path, err)
+			mlog.Errorf("failed to generate file report [%s]: %v", testCtx.Config.Output.Path, err)
 			os.Exit(1)
 		}
 	},

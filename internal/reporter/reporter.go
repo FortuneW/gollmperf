@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/FortuneW/qlog"
@@ -219,6 +220,9 @@ func (r *Reporter) GenerateHTMLReport(filename string) error {
 // GenerateFileReport generates a report in the specified format
 func (r *Reporter) GenerateFileReport(reportFile, reportFormat string) error {
 	_ = os.MkdirAll(filepath.Dir(reportFile), 0755)
+	if !strings.HasSuffix(strings.ToLower(reportFile), reportFormat) {
+		reportFile = reportFile + "." + reportFormat
+	}
 	switch reportFormat {
 	case "json":
 		if err := r.GenerateJSONReport(reportFile); err != nil {

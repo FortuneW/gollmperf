@@ -62,10 +62,10 @@ func InitializeTest(flags *RunFlags) *TestContext {
 	var prov provider.Provider
 	switch cfg.Model.Provider {
 	case "openai":
-		prov = provider.NewOpenAIProvider(cfg.Model.Name, cfg.Model.Endpoint, cfg.Test.Timeout)
+		prov = provider.NewOpenAIProvider(cfg.Model.ApiKey, cfg.Model.Endpoint, cfg.Test.Timeout)
 		mlog.Infof("Created OpenAI provider with model %s", cfg.Model.Name)
 	case "qwen":
-		prov = provider.NewQwenProvider(cfg.Model.Name, cfg.Model.Endpoint, cfg.Test.Timeout)
+		prov = provider.NewQwenProvider(cfg.Model.ApiKey, cfg.Model.Endpoint, cfg.Test.Timeout)
 		mlog.Infof("Created Qwen provider with model %s", cfg.Model.Name)
 	default:
 		mlog.Errorf("Unsupported provider: %s. Supported providers: openai, qwen", cfg.Model.Provider)

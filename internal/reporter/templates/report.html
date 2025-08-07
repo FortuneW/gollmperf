@@ -245,6 +245,36 @@
             white-space: nowrap;
         }
 
+        /* Error Statistics Styles */
+        .error-distribution {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .error-item {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 3px 0;
+        }
+
+        .error-type {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .error-count {
+            color: var(--error-color);
+            font-weight: 600;
+        }
+
+        .no-errors {
+            color: var(--success-color);
+            font-style: italic;
+        }
+
         .comparison-table th[colspan] {
             background-color: var(--light-bg);
             font-weight: 600;
@@ -370,7 +400,7 @@
 
             <!-- Key Comparison Metrics -->
             <div class="metrics-dashboard">
- 
+
                 <div class="metric-card">
                     <div class="metric-category">Best Performance</div>
                     <div class="metric-title">Highest QPS</div>
@@ -381,28 +411,33 @@
                 <div class="metric-card">
                     <div class="metric-category">Best Throughput</div>
                     <div class="metric-title">Highest Tokens per Second</div>
-                    <div class="metric-value qps">{{printf "%.1f" .ReporterData.GetBestTokensThroughput.Metrics.TokensPerSecond}}</div>
+                    <div class="metric-value qps">{{printf "%.1f"
+                        .ReporterData.GetBestTokensThroughput.Metrics.TokensPerSecond}}</div>
                     <div class="detail-label">at {{.ReporterData.GetBestTokensThroughput.Concurrency}} concurrency</div>
                 </div>
 
                 <div class="metric-card">
                     <div class="metric-category">Best Response</div>
                     <div class="metric-title">Lowest Latency</div>
-                    <div class="metric-value latency">{{.ReporterData.GetBestLatency.Metrics.AverageLatency.Milliseconds}}</div>
+                    <div class="metric-value latency">
+                        {{.ReporterData.GetBestLatency.Metrics.AverageLatency.Milliseconds}}</div>
                     <div class="detail-label">at {{.ReporterData.GetBestLatency.Concurrency}} concurrency</div>
                 </div>
 
                 <div class="metric-card">
                     <div class="metric-category">Best TTFT</div>
                     <div class="metric-title">Lowest Time to First Token</div>
-                    <div class="metric-value latency">{{.ReporterData.GetBestFirstTokenLatency.Metrics.AverageFirstTokenLatency.Milliseconds}}</div>
-                    <div class="detail-label">at {{.ReporterData.GetBestFirstTokenLatency.Concurrency}} concurrency</div>
+                    <div class="metric-value latency">
+                        {{.ReporterData.GetBestFirstTokenLatency.Metrics.AverageFirstTokenLatency.Milliseconds}}</div>
+                    <div class="detail-label">at {{.ReporterData.GetBestFirstTokenLatency.Concurrency}} concurrency
+                    </div>
                 </div>
 
                 <div class="metric-card">
                     <div class="metric-category">Best Reliability</div>
                     <div class="metric-title">Highest Success Rate</div>
-                    <div class="metric-value success-rate">{{printf "%.2f" .ReporterData.GetBestSuccessRate.Metrics.SuccessRate}}%</div>
+                    <div class="metric-value success-rate">{{printf "%.2f"
+                        .ReporterData.GetBestSuccessRate.Metrics.SuccessRate}}%</div>
                     <div class="detail-label">at {{.ReporterData.GetBestSuccessRate.Concurrency}} concurrency</div>
                 </div>
             </div>
@@ -461,9 +496,48 @@
                 </div>
             </div>
 
+            <!-- Error Statistics Table -->
+            <div class="section">
+                <h3 class="section-title">Error Statistics</h3>
+                <div class="comparison-table-container">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Concurrency</th>
+                                <th>Failed/Total Requests</th>
+                                <th>Error Rate</th>
+                                <th>Error Type Distribution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .ReporterData.TestResults}}
+                            {{if gt .Metrics.FailedRequests 0}}
+                            <tr>
+                                <td>{{.Concurrency}}</td>
+                                <td>{{.Metrics.FailedRequests}}/{{.Metrics.TotalRequests}}</td>
+                                <td><span class="error-count">{{printf "%.2f%%" .Metrics.ErrorRate}}</span></td>
+                                <td>
+                                    {{if .Metrics.ErrorTypeCounts}}
+                                    <div class="error-distribution">
+                                        {{range $errorType, $count := .Metrics.ErrorTypeCounts}}
+                                        <div class="error-item">
+                                            <span class="error-type">{{$errorType}}:</span>
+                                            <span class="error-count">{{$count}}</span>
+                                        </div>
+                                        {{end}}
+                                    </div>
+                                    {{else}}
+                                    <span class="no-errors">No errors</span>
+                                    {{end}}
+                                </td>
+                            </tr>
+                            {{end}}
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-
-
 
         <div class="footer">
             Generated by <a href="https://github.com/FortuneW/gollmperf">goLLMPerf</a> - LLM Performance Testing Tool

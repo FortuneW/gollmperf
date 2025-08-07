@@ -117,7 +117,7 @@ func (p *OpenAIProvider) SendRequest(priorityParams, anyParam AnyParams, headers
 	// Check status code
 	if respHttp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(respHttp.Body)
-		return nil, fmt.Errorf("API returned status %d: %s", respHttp.StatusCode, string(body))
+		return nil, fmt.Errorf("code %d: %s", respHttp.StatusCode, string(body))
 	}
 
 	defer func() {

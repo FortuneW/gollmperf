@@ -40,6 +40,9 @@ func (c *ConcurrentComparison) GetBestLatency() *ConcurrentTestResult {
 
 	best := &c.TestResults[0]
 	for i := 1; i < len(c.TestResults); i++ {
+		if best.Metrics.AverageLatency == 0 {
+			continue
+		}
 		if c.TestResults[i].Metrics.AverageLatency < best.Metrics.AverageLatency {
 			best = &c.TestResults[i]
 		} else if c.TestResults[i].Metrics.AverageLatency == best.Metrics.AverageLatency && c.TestResults[i].Concurrency > best.Concurrency {
@@ -74,6 +77,9 @@ func (c *ConcurrentComparison) GetBestFirstTokenLatency() *ConcurrentTestResult 
 
 	best := &c.TestResults[0]
 	for i := 1; i < len(c.TestResults); i++ {
+		if c.TestResults[i].Metrics.AverageFirstTokenLatency == 0 {
+			continue
+		}
 		if c.TestResults[i].Metrics.AverageFirstTokenLatency < best.Metrics.AverageFirstTokenLatency {
 			best = &c.TestResults[i]
 		} else if c.TestResults[i].Metrics.AverageFirstTokenLatency == best.Metrics.AverageFirstTokenLatency && c.TestResults[i].Concurrency > best.Concurrency {

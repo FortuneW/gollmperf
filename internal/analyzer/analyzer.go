@@ -47,6 +47,7 @@ type Metrics struct {
 	SuccessfulRequests int     `json:"successful_requests"`
 	FailedRequests     int     `json:"failed_requests"`
 	SuccessRate        Float64 `json:"success_rate"`
+	ErrorRate          Float64 `json:"error_rate"`
 
 	// Timing metrics
 	TotalDuration  Duration `json:"total_duration"`
@@ -104,6 +105,9 @@ func (a *Analyzer) Analyze() *Metrics {
 
 	if metrics.TotalRequests > 0 {
 		metrics.SuccessRate = Float64(metrics.SuccessfulRequests) / Float64(metrics.TotalRequests) * 100
+		metrics.ErrorRate = 100 - metrics.SuccessRate
+	} else {
+		metrics.ErrorRate = 0
 	}
 
 	// Duration

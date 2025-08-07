@@ -131,17 +131,28 @@ In performance testing mode, the tool will run tests across multiple concurrency
 `./gollmperf run -h`
 
 ```bash
-  -k, --apikey string     API key
-  -d, --dataset string    Dataset file path
-  -e, --endpoint string   Endpoint
-  -f, --format string     Report format (json, csv, html) (default as report file extension)
-  -m, --model string      Model name
-  -r, --report string     Report file path (output report to file)
+  -k, --apikey string          API key
+  -b, --batch                  Run batch mode, for run all case in dataset
+      --batch-result string    Batch results file path (output batch results to JSONL file)
+  -d, --dataset string         Dataset file path
+  -e, --endpoint string        Endpoint
+  -f, --format string          Report format (json, csv, html) (default as report file extension)
+  -m, --model string           Model name
+  -p, --perf                   Run perf mode, for find performance limits in different concurrency levels
+  -P, --provider string        LLM provider (openai, qwen, etc.) (default "openai")
+  -r, --report string          Report file path (output report to file)
 ```
 
 ```bash
 # Command args override config file fields
 ./gollmperf run --config ./configs/example.yaml --model gpt-3.5-turbo --dataset ./examples/test_cases.jsonl --report result.json --format json
+```
+
+### Batch Results Output
+
+```bash
+# Run batch test and save results to JSONL file
+./gollmperf run --config ./configs/example.yaml --batch --batch-result ./others/batch_results.jsonl
 ```
 
 ### Usage Examples
@@ -247,6 +258,9 @@ output:
     
   # Output file path
   path: ./results/report.html
+  
+  # Batch testing result file path (for saving batch test results in JSONL format)
+  batch_result_path: ./results/batch_results.jsonl
 ```
 
 ## Professional Features

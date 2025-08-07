@@ -131,20 +131,28 @@ gollmperf/
 `./gollmperf run -h`
 
 ```bash
-  -k, --apikey string     API密钥
-  -b, --batch             运行批量模式，执行数据集中的所有案例
-  -d, --dataset string    数据集文件路径
-  -e, --endpoint string   端点
-  -f, --format string     报告格式 (json, csv, html) (默认为报告文件扩展名)
-  -m, --model string      模型名称
-  -p, --perf              运行性能模式，查找不同并发级别下的性能限制
-  -P, --provider string   LLM提供商 (openai, qwen, 等) (默认 "openai")
-  -r, --report string     报告文件路径 (输出报告到文件)
+  -k, --apikey string          API密钥
+  -b, --batch                  运行批量模式，执行数据集中的所有案例
+      --batch-result string    批量测试结果文件路径 (将批量测试结果输出到JSONL文件)
+  -d, --dataset string         数据集文件路径
+  -e, --endpoint string        端点
+  -f, --format string          报告格式 (json, csv, html) (默认为报告文件扩展名)
+  -m, --model string           模型名称
+  -p, --perf                   运行性能模式，查找不同并发级别下的性能限制
+  -P, --provider string        LLM提供商 (openai, qwen, 等) (默认 "openai")
+  -r, --report string          报告文件路径 (输出报告到文件)
 ```
 
 ```bash
 # 命令行参数覆盖配置文件字段
 ./gollmperf run --config ./configs/example.yaml --model gpt-3.5-turbo --dataset ./examples/test_cases.jsonl --report result.json --format json
+```
+
+### 批量测试结果输出
+
+```bash
+# 运行批量测试并将结果保存到JSONL文件
+./gollmperf run --config ./configs/example.yaml --batch --batch-result ./other/batch_results.jsonl
 ```
 
 ### 对比测试
@@ -256,6 +264,9 @@ output:
     
   # Output file path
   path: ./results/report.html
+  
+  # 批量测试结果文件路径 (用于将批量测试结果保存为JSONL格式)
+  batch_result_path: ./results/batch_results.jsonl
 ```
 
 ## 专业特性

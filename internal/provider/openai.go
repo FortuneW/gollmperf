@@ -188,7 +188,7 @@ func (p *OpenAIProvider) handleStreamingResponse(resp *http.Response, startTime 
 
 		// Check for end of stream
 		if data == "[DONE]" {
-			break
+			continue
 		}
 
 		// Parse the SSE event

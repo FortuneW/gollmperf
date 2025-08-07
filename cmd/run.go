@@ -8,6 +8,7 @@ import (
 	"github.com/FortuneW/gollmperf/internal/collector"
 	"github.com/FortuneW/gollmperf/internal/engine"
 	"github.com/FortuneW/gollmperf/internal/reporter"
+	"github.com/FortuneW/gollmperf/internal/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -44,6 +45,15 @@ Run perf mode test to find performance limits in different concurrency levels`,
 			if err := r.GenerateFileReport(testCtx.Config.Output.Path, testCtx.Config.Output.Format); err != nil {
 				mlog.Errorf("failed to generate file report [%s]: %v", testCtx.Config.Output.Path, err)
 			}
+
+			// Save batch results in JSONL format if requested and in batch mode
+			if !isStress && testCtx.Config.Output.BatchResultPath != "" {
+				if err := utils.SaveBatchResultsToJSONL(col.GetAllResults(), testCtx.Config.Output.BatchResultPath); err != nil {
+					mlog.Errorf("failed to save batch results to JSONL file [%s]: %v", testCtx.Config.Output.BatchResultPath, err)
+				} else {
+					mlog.Infof("Batch results saved to %s", testCtx.Config.Output.BatchResultPath)
+				}
+			}
 		}
 
 		if !runFlags.IsPerf {
@@ -63,6 +73,7 @@ func init() {
 	rootCmd.AddCommand(runCmd)
 	runCmd.Flags().BoolVarP(&runFlags.IsBatch, "batch", "b", false, "Run batch mode, for run all case in dataset")
 	runCmd.Flags().BoolVarP(&runFlags.IsPerf, "perf", "p", false, "Run perf mode, for find performance limits in different concurrency levels")
+	runCmd.Flags().StringVarP(&runFlags.BatchResultFile, "batch-result", "", "", "Batch results file path (output batch results to JSONL file)")
 	runCmd.Flags().StringVarP(&runFlags.ConfigPath, "config", "c", "", "config file (default is ./example.yaml)")
 	runCmd.Flags().StringVarP(&runFlags.Provider, "provider", "P", "openai", "LLM provider (openai, qwen, etc.)")
 	runCmd.Flags().StringVarP(&runFlags.Model, "model", "m", "", "Model name")

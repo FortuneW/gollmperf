@@ -56,6 +56,7 @@ func GenerateDefaultConfig(filePath string) error {
 
 	// Add default values for output
 	config.Output.Path = "./results/report.html"
+	config.Output.BatchResultPath = "./results/batch_results.jsonl"
 
 	// Marshal config to YAML
 	data, err := yaml.Marshal(config)
@@ -85,12 +86,12 @@ type Config struct {
 
 // TestConfig represents test configuration
 type TestConfig struct {
-	Duration               time.Duration `yaml:"duration"`
-	Warmup                 time.Duration `yaml:"warmup"`
-	Concurrency            int           `yaml:"concurrency"`
-	RequestsPerConcurrency int           `yaml:"requests_per_concurrency"`
-	Timeout                time.Duration `yaml:"timeout"`
-	PerfConcurrencyGroup   []int         `yaml:"perf_concurrency_group"`
+	Duration               time.Duration
+	Warmup                 time.Duration
+	Concurrency            int
+	RequestsPerConcurrency int `mapstructure:"requests_per_concurrency"`
+	Timeout                time.Duration
+	PerfConcurrencyGroup   []int `mapstructure:"perf_concurrency_group"`
 }
 
 // SystemPromptTemplate represents the system prompt configuration
@@ -103,43 +104,31 @@ type SystemPromptTemplate struct {
 
 // ModelConfig represents model configuration
 type ModelConfig struct {
-	Name                 string                 `yaml:"name"`
-	Provider             string                 `yaml:"provider"`
-	Endpoint             string                 `yaml:"endpoint"`
-	ApiKey               string                 `yaml:"api_key"`
-	Headers              map[string]string      `yaml:"headers"`
-	ParamsTemplate       map[string]interface{} `yaml:"-"`
-	SystemPromptTemplate SystemPromptTemplate   `yaml:"system_prompt_template"`
+	Name                 string
+	Provider             string
+	Endpoint             string
+	Headers              map[string]string
+	ApiKey               string                 `mapstructure:"api_key"`
+	ParamsTemplate       map[string]interface{} `mapstructure:"params_template"`
+	SystemPromptTemplate SystemPromptTemplate   `mapstructure:"system_prompt_template"`
 }
 
 // DatasetConfig represents dataset configuration
 type DatasetConfig struct {
-	Type string `yaml:"type"`
-	Path string `yaml:"path"`
+	Type string
+	Path string
 }
 
 // OutputConfig represents output configuration
 type OutputConfig struct {
-	Format string `yaml:"format"`
-	Path   string `yaml:"path"`
+	Format          string
+	Path            string
+	BatchResultPath string `mapstructure:"batch_result_path"`
 }
 
 // NewConfig creates a new Config with default values
 func NewConfig() *Config {
-	return &Config{
-		Test: TestConfig{
-			Concurrency:          1,
-			PerfConcurrencyGroup: []int{},
-		},
-		Model: ModelConfig{},
-		Dataset: DatasetConfig{
-			Type: "jsonl",
-		},
-		Output: OutputConfig{
-			Format: "html",
-			Path:   "./results",
-		},
-	}
+	return &Config{}
 }
 
 // LoadConfig loads configuration from a YAML file
@@ -171,14 +160,6 @@ func LoadConfig(configPath string) (*Config, error) {
 		}
 	}
 
-	// Handle environment variable substitution for model.endpoint
-	if endpoint := v.GetString("model.endpoint"); endpoint != "" {
-		if len(endpoint) > 3 && endpoint[:2] == "${" && endpoint[len(endpoint)-1:] == "}" {
-			envVar := endpoint[2 : len(endpoint)-1]
-			config.Model.Endpoint = os.Getenv(envVar)
-		}
-	}
-
 	// Handle environment variable substitution for model.api_key
 	if apiKey := v.GetString("model.api_key"); apiKey != "" {
 		if len(apiKey) > 3 && apiKey[:2] == "${" && apiKey[len(apiKey)-1:] == "}" {
@@ -187,26 +168,19 @@ func LoadConfig(configPath string) (*Config, error) {
 		}
 	}
 
-	// Handle ParamsTemplate
-	if paramsTemplate := v.GetStringMap("model.params_template"); paramsTemplate != nil {
-		config.Model.ParamsTemplate = paramsTemplate
-	}
-
-	// Handle SystemPromptTemplate
-	var systemPromptTemplate SystemPromptTemplate
-	if err := v.UnmarshalKey("model.system_prompt_template", &systemPromptTemplate); err != nil {
-		mlog.Warnf("Failed to unmarshal system_prompt_template: %v", err)
-	} else {
-		if systemPromptTemplate.Enable {
-			if systemPromptTemplate.Content != "" && systemPromptTemplate.Path != "" {
-				mlog.Warnf("Both content and path are set for system_prompt_template, content will take precedence")
-			}
+	// Handle environment variable substitution for model.endpoint
+	if endpoint := v.GetString("model.endpoint"); endpoint != "" {
+		if len(endpoint) > 3 && endpoint[:2] == "${" && endpoint[len(endpoint)-1:] == "}" {
+			envVar := endpoint[2 : len(endpoint)-1]
+			config.Model.Endpoint = os.Getenv(envVar)
 		}
-		config.Model.SystemPromptTemplate = systemPromptTemplate
 	}
 
-	PerfConcurrencyGroup := v.GetIntSlice("test.perf_concurrency_group")
-	config.Test.PerfConcurrencyGroup = PerfConcurrencyGroup
+	if config.Model.SystemPromptTemplate.Enable {
+		if config.Model.SystemPromptTemplate.Content != "" && config.Model.SystemPromptTemplate.Path != "" {
+			mlog.Warnf("Both content and path are set for system_prompt_template, content will take precedence")
+		}
+	}
 
 	return config, nil
 }
@@ -234,15 +208,19 @@ func (c *Config) OverrideWithFlags(flags *ConfigOverrideFlags) {
 	if flags.ReportFormat != "" {
 		c.Output.Format = flags.ReportFormat
 	}
+	if flags.BatchResultFile != "" {
+		c.Output.BatchResultPath = flags.BatchResultFile
+	}
 }
 
 // ConfigOverrideFlags holds the command line flags for overriding config values
 type ConfigOverrideFlags struct {
-	Provider     string
-	Model        string
-	Dataset      string
-	ApiKey       string
-	Endpoint     string
-	ReportFile   string
-	ReportFormat string
+	Provider        string
+	Model           string
+	Dataset         string
+	ApiKey          string
+	Endpoint        string
+	ReportFile      string
+	ReportFormat    string
+	BatchResultFile string
 }

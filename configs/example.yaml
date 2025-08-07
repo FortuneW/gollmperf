@@ -66,8 +66,12 @@ dataset:
 
 # Output configuration
 output:
-  # Output formats (json, csv, html)
+  # Output report file format (json, csv, html)
   format: html
 
-  # Output file path
+  # Output report file path
   path: ./results/report.html
+
+  # Batch results file path
+  batch_result_path: ./results/batch_results.jsonl
+

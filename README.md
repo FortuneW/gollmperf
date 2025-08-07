@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD001 MD041 -->
-<center>
+<p align="center">
 <img alt="gollmperf" src="./docs/assets/logos/logo1.png" width=50%>
-</center>
+</p>
 
 # gollmperf - Professional LLM Performance Testing Tool
 

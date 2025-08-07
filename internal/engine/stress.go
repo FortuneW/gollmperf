@@ -20,7 +20,7 @@ func (e *Engine) RunStress(dataset []provider.AnyParams) ([]*Result, error) {
 	}
 
 	// Actual stress test
-	stressLog.Infof("Starting stress test for %v with concurrency %d...", e.config.Test.Duration, e.config.Test.Concurrency)
+	stressLog.Infof("Starting stress testing for %v with concurrency %d...", e.config.Test.Duration, e.config.Test.Concurrency)
 
 	// Create channel for results
 	resultsChan := make(chan *Result, 1000) // Buffered channel to prevent blocking

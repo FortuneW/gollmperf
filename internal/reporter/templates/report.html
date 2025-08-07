@@ -255,8 +255,17 @@
         }
 
         .comparison-table th {
-            background-color: var(--light-bg);
             font-weight: 600;
+        }
+
+        .comparison-table th[rowspan] {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .comparison-table th:not([rowspan]) {
+            background-color: var(--secondary-color);
+            color: white;
         }
 
         .comparison-table tr:nth-child(even) {
@@ -372,7 +381,7 @@
                 <div class="metric-card">
                     <div class="metric-category">Best Throughput</div>
                     <div class="metric-title">Highest Tokens per Second</div>
-                    <div class="metric-value latency">{{printf "%.1f" .ReporterData.GetBestTokensThroughput.Metrics.TokensPerSecond}}</div>
+                    <div class="metric-value qps">{{printf "%.1f" .ReporterData.GetBestTokensThroughput.Metrics.TokensPerSecond}}</div>
                     <div class="detail-label">at {{.ReporterData.GetBestTokensThroughput.Concurrency}} concurrency</div>
                 </div>
 
@@ -406,6 +415,8 @@
                         <thead>
                             <tr>
                                 <th rowspan="2">Concurrency</th>
+                                <th rowspan="2">Requests</th>
+                                <th rowspan="2">Duration</th>
                                 <th rowspan="2">QPS</th>
                                 <th rowspan="2">Tokens/sec</th>
                                 <th colspan="4">E2E Latency</th>
@@ -429,6 +440,8 @@
                             {{range .ReporterData.TestResults}}
                             <tr>
                                 <td>{{.Concurrency}}</td>
+                                <td>{{.Metrics.SuccessfulRequests}}/{{.Metrics.TotalRequests}}</td>
+                                <td>{{.Metrics.TotalDuration.Milliseconds}}ms</td>
                                 <td>{{printf "%.2f" .Metrics.QPS}}</td>
                                 <td>{{printf "%.1f" .Metrics.TokensPerSecond}}</td>
                                 <td>{{.Metrics.AverageLatency.Milliseconds}}</td>

@@ -52,9 +52,11 @@ func GenerateDefaultConfig(filePath string) error {
 	}
 
 	// Add default values for dataset
+	config.Dataset.Type = "jsonl"
 	config.Dataset.Path = "./examples/test_cases.jsonl"
 
 	// Add default values for output
+	config.Output.Format = "html"
 	config.Output.Path = "./results/report.html"
 	config.Output.BatchResultPath = "./results/batch_results.jsonl"
 

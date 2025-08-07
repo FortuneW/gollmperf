@@ -11,7 +11,7 @@ var batchLog = qlog.GetRLog("engine.batch")
 
 // RunBatch runs a batch test
 func (e *Engine) RunBatch(dataset []provider.AnyParams) ([]*Result, error) {
-	batchLog.Infof("Starting batch test with concurrency %d...", e.config.Test.Concurrency)
+	batchLog.Infof("Starting batch testing with concurrency %d...", e.config.Test.Concurrency)
 
 	// Create results slice with exact capacity
 	results := make([]*Result, len(dataset))

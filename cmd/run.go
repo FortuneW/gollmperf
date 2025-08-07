@@ -14,7 +14,7 @@ import (
 
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "Run batch or stress test and perf test",
+	Short: "Run batch or stress test and perf mode",
 	Long: `Run batch test to finish all cases;
 Run stress test to find system stability;
 Run perf mode test to find performance limits in different concurrency levels`,
@@ -46,7 +46,7 @@ Run perf mode test to find performance limits in different concurrency levels`,
 				mlog.Errorf("failed to generate file report [%s]: %v", testCtx.Config.Output.Path, err)
 			}
 
-			// Save batch results in JSONL format if requested and in batch mode
+			// Save batch results in JSONL format if requested and in batch testing
 			if !isStress && testCtx.Config.Output.BatchResultPath != "" {
 				if err := utils.SaveBatchResultsToJSONL(col.GetAllResults(), testCtx.Config.Output.BatchResultPath); err != nil {
 					mlog.Errorf("failed to save batch results to JSONL file [%s]: %v", testCtx.Config.Output.BatchResultPath, err)

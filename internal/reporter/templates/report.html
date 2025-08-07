@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>gollmperf Performance Report</title>
+    <title>goLLMPerf Performance Report</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -350,17 +350,13 @@
 <body>
     <div class="container">
         <header>
-            <h1>gollmperf Performance Report</h1>
-            <div class="subtitle">Comprehensive LLM Performance Analysis</div>
+            <h1>goLLMPerf Performance Report</h1>
         </header>
 
-        <!-- Conditional Display: Single Test or Concurrent Comparison -->
-        {{if .IsConcurrentTest}}
         <!-- Concurrent Test Comparison Display -->
         <div class="test-group">
             <div class="test-header">
                 <h2 class="test-title">Concurrent Test Comparison</h2>
-                <div class="test-config">Multiple Concurrency Levels</div>
             </div>
 
             <!-- Key Comparison Metrics -->
@@ -455,153 +451,12 @@
                 </div>
             </div>
 
-            <!-- Recommendations -->
-            <div class="section">
-                <h3 class="section-title">Performance Recommendations</h3>
-                <div class="detail-card">
-                    <div class="detail-item">
-                        <span class="detail-label">Optimal Concurrency</span>
-                        <span class="detail-value">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Performance Limit</span>
-                        <span class="detail-value">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Stability Threshold</span>
-                        <span class="detail-value">-</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{else}}
-        <!-- Single Test Display (current implementation) -->
-        <div class="test-group">
-            <div class="test-header">
-                <h2 class="test-title">Performance Results</h2>
-                <div class="test-config">Test Configuration</div>
-            </div>
-
-            <!-- Key Metrics Dashboard -->
-            <div class="metrics-dashboard">
-                <div class="metric-card merged-card">
-                    <div class="metric-category">Requests</div>
-                    <div class="metric-title">Request Statistics</div>
-                    <div class="merged-metrics">
-                        <div class="merged-metric">
-                            <span class="merged-label">Total:</span>
-                            <span class="merged-value">{{.Metrics.TotalRequests}}</span>
-                        </div>
-                        <div class="merged-metric">
-                            <span class="merged-label">Success:</span>
-                            <span class="merged-value">{{.Metrics.SuccessfulRequests}}</span>
-                        </div>
-                        <div class="merged-metric">
-                            <span class="merged-label">Failed:</span>
-                            <span class="merged-value error-rate">{{.Metrics.FailedRequests}}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-category">Rate</div>
-                    <div class="metric-title">Success Rate</div>
-                    <div class="metric-value success-rate">{{printf "%.2f" .Metrics.SuccessRate}}%</div>
-                </div>
-
-                {{if gt .SuccessfulRequests 0}}
-                <div class="metric-card">
-                    <div class="metric-category">Performance</div>
-                    <div class="metric-title">QPS</div>
-                    <div class="metric-value qps">{{printf "%.2f" .Metrics.QPS}}</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-category">Throughput</div>
-                    <div class="metric-title">Tokens/sec</div>
-                    <div class="metric-value">{{printf "%.2f" .Metrics.TokensPerSecond}}</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-category">Latency</div>
-                    <div class="metric-title">Average Latency</div>
-                    <div class="metric-value latency">{{.Metrics.AverageLatency.Milliseconds}}</div>
-                </div>
-                {{end}}
-            </div>
-
-            {{if gt .SuccessfulRequests 0}}
-            <!-- Detailed Metrics -->
-            <div class="metrics-grid">
-                <!-- Performance Table -->
-                <div class="detail-card">
-                    <h3 class="detail-title">Performance Metrics</h3>
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>QPS</th>
-                                <th>Tokens/sec</th>
-                                <th colspan="4">E2E Latency</th>
-                                <th colspan="2">Token Metrics</th>
-                                <th colspan="4">First Token Latency</th>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                                <th>Average</th>
-                                <th>P50</th>
-                                <th>P90</th>
-                                <th>P99</th>
-                                <th>Request</th>
-                                <th>Response</th>
-                                <th>Average</th>
-                                <th>P50</th>
-                                <th>P90</th>
-                                <th>P99</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{{printf "%.2f" .Metrics.QPS}}</td>
-                                <td>{{printf "%.2f" .Metrics.TokensPerSecond}}</td>
-                                <td>{{.Metrics.AverageLatency.Milliseconds}}</td>
-                                <td>{{.Metrics.LatencyP50.Milliseconds}}</td>
-                                <td>{{.Metrics.LatencyP90.Milliseconds}}</td>
-                                <td>{{.Metrics.LatencyP99.Milliseconds}}</td>
-                                <td>{{printf "%.2f" .Metrics.AverageRequestTokens}}</td>
-                                <td>{{printf "%.2f" .Metrics.AverageResponseTokens}}</td>
-                                <td>{{.Metrics.AverageFirstTokenLatency.Milliseconds}}</td>
-                                <td>{{.Metrics.FirstTokenLatencyP50.Milliseconds}}</td>
-                                <td>{{.Metrics.FirstTokenLatencyP90.Milliseconds}}</td>
-                                <td>{{.Metrics.FirstTokenLatencyP99.Milliseconds}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-            {{end}}
         </div>
 
-        <!-- Error Distribution -->
-        {{if .Metrics.ErrorTypeCounts}}
-        <div class="section">
-            <h2 class="section-title">Error Distribution</h2>
-            <div class="detail-card">
-                {{range $error, $count := .Metrics.ErrorTypeCounts}}
-                <div class="detail-item">
-                    <span class="detail-label">{{$error}}</span>
-                    <span class="detail-value error">{{$count}}</span>
-                </div>
-                {{end}}
-            </div>
-        </div>
-        {{end}}
-        {{end}}
 
 
         <div class="footer">
-            Generated by gollmperf - LLM Performance Testing Tool
+            Generated by <a href="https://github.com/FortuneW/gollmperf">goLLMPerf</a> - LLM Performance Testing Tool
         </div>
     </div>
 </body>

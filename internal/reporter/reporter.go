@@ -17,30 +17,25 @@ var mlog = qlog.GetRLog("reporter")
 
 // ReporterData is a wrapper struct for template data
 type ReporterData struct {
-	// For single test results
-	*analyzer.Metrics
-
-	// For concurrent test comparisons
-	Concurrent       *ConcurrentComparison `json:"concurrent,omitempty"`
-	IsConcurrentTest bool                  `json:"is_concurrent_test"`
+	Concurrent *ConcurrentComparison `json:"concurrent,omitempty"`
 }
 
 // Reporter generates reports from analysis results
 type Reporter struct {
-	metrics    *analyzer.Metrics
-	concurrent *ConcurrentComparison
+	metrics              *analyzer.Metrics
+	concurrentComparison *ConcurrentComparison
 }
 
 // NewReporter creates a new reporter
 func NewReporter() *Reporter {
 	return &Reporter{
-		concurrent: &ConcurrentComparison{},
+		concurrentComparison: &ConcurrentComparison{},
 	}
 }
 
 // AddNewMetrics adds new metrics to the reporter
 func (r *Reporter) AddNewMetrics(concurrency int, metrics *analyzer.Metrics) {
-	r.concurrent.TestResults = append(r.concurrent.TestResults, ConcurrentTestResult{
+	r.concurrentComparison.TestResults = append(r.concurrentComparison.TestResults, ConcurrentTestResult{
 		Concurrency: concurrency,
 		Metrics:     metrics,
 	})
@@ -96,7 +91,7 @@ func (r *Reporter) GenerateJSONReport(filename string) error {
 	encoder := json.NewEncoder(file)
 	encoder.SetIndent("", "  ")
 
-	if err := encoder.Encode(r.metrics); err != nil {
+	if err := encoder.Encode(r.concurrentComparison); err != nil {
 		return fmt.Errorf("failed to encode JSON: %w", err)
 	}
 
@@ -112,7 +107,7 @@ func (r *Reporter) GenerateCSVReport(filename string) error {
 	defer file.Close()
 
 	// Write CSV header
-	header := "total_requests,successful_requests,failed_requests,success_rate,qps,tokens_per_second," +
+	header := "concurrency,total_requests,successful_requests,failed_requests,success_rate,qps,tokens_per_second," +
 		"average_latency,latency_p50,latency_p90,latency_p99," +
 		"average_request_tokens,average_response_tokens," +
 		"average_first_token_latency,first_token_latency_p50,first_token_latency_p90,first_token_latency_p99\n"
@@ -121,30 +116,32 @@ func (r *Reporter) GenerateCSVReport(filename string) error {
 		return fmt.Errorf("failed to write header: %w", err)
 	}
 
-	// Write data row
-	row := fmt.Sprintf("%d,%d,%d,%.2f,%.2f,%.2f,%d,%d,%d,%d,%.2f,%.2f,%d,%d,%d,%d\n",
-		r.metrics.TotalRequests,
-		r.metrics.SuccessfulRequests,
-		r.metrics.FailedRequests,
-		r.metrics.SuccessRate,
-		r.metrics.QPS,
-		r.metrics.TokensPerSecond,
-		r.metrics.AverageLatency.Milliseconds(),
-		r.metrics.LatencyP50.Milliseconds(),
-		r.metrics.LatencyP90.Milliseconds(),
-		r.metrics.LatencyP99.Milliseconds(),
-		r.metrics.AverageRequestTokens,
-		r.metrics.AverageResponseTokens,
-		r.metrics.AverageFirstTokenLatency.Milliseconds(),
-		r.metrics.FirstTokenLatencyP50.Milliseconds(),
-		r.metrics.FirstTokenLatencyP90.Milliseconds(),
-		r.metrics.FirstTokenLatencyP99.Milliseconds(),
-	)
+	for _, result := range r.concurrentComparison.TestResults {
+		// Write data row
+		row := fmt.Sprintf("%d,%d,%d,%d,%.2f,%.2f,%.2f,%d,%d,%d,%d,%.2f,%.2f,%d,%d,%d,%d\n",
+			result.Concurrency,
+			result.Metrics.TotalRequests,
+			result.Metrics.SuccessfulRequests,
+			result.Metrics.FailedRequests,
+			result.Metrics.SuccessRate,
+			result.Metrics.QPS,
+			result.Metrics.TokensPerSecond,
+			result.Metrics.AverageLatency.Milliseconds(),
+			result.Metrics.LatencyP50.Milliseconds(),
+			result.Metrics.LatencyP90.Milliseconds(),
+			result.Metrics.LatencyP99.Milliseconds(),
+			result.Metrics.AverageRequestTokens,
+			result.Metrics.AverageResponseTokens,
+			result.Metrics.AverageFirstTokenLatency.Milliseconds(),
+			result.Metrics.FirstTokenLatencyP50.Milliseconds(),
+			result.Metrics.FirstTokenLatencyP90.Milliseconds(),
+			result.Metrics.FirstTokenLatencyP99.Milliseconds(),
+		)
 
-	if _, err := file.WriteString(row); err != nil {
-		return fmt.Errorf("failed to write data: %w", err)
+		if _, err := file.WriteString(row); err != nil {
+			return fmt.Errorf("failed to write data: %w", err)
+		}
 	}
-
 	return nil
 }
 
@@ -172,9 +169,7 @@ func (r *Reporter) GenerateHTMLReport(filename string) error {
 
 	// Create wrapper data for template
 	data := &ReporterData{
-		Metrics:          r.metrics,
-		Concurrent:       r.concurrent,
-		IsConcurrentTest: r.concurrent != nil,
+		Concurrent: r.concurrentComparison,
 	}
 
 	// Execute template with wrapper data

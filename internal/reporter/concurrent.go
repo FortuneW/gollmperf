@@ -25,6 +25,8 @@ func (c *ConcurrentComparison) GetBestQPS() *ConcurrentTestResult {
 	for i := 1; i < len(c.TestResults); i++ {
 		if c.TestResults[i].Metrics.QPS > best.Metrics.QPS {
 			best = &c.TestResults[i]
+		} else if c.TestResults[i].Metrics.QPS == best.Metrics.QPS && c.TestResults[i].Concurrency > best.Concurrency {
+			best = &c.TestResults[i]
 		}
 	}
 	return best
@@ -40,6 +42,8 @@ func (c *ConcurrentComparison) GetBestLatency() *ConcurrentTestResult {
 	for i := 1; i < len(c.TestResults); i++ {
 		if c.TestResults[i].Metrics.AverageLatency < best.Metrics.AverageLatency {
 			best = &c.TestResults[i]
+		} else if c.TestResults[i].Metrics.AverageLatency == best.Metrics.AverageLatency && c.TestResults[i].Concurrency > best.Concurrency {
+			best = &c.TestResults[i]
 		}
 	}
 	return best
@@ -54,6 +58,8 @@ func (c *ConcurrentComparison) GetBestSuccessRate() *ConcurrentTestResult {
 	best := &c.TestResults[0]
 	for i := 1; i < len(c.TestResults); i++ {
 		if c.TestResults[i].Metrics.SuccessRate > best.Metrics.SuccessRate {
+			best = &c.TestResults[i]
+		} else if c.TestResults[i].Metrics.SuccessRate == best.Metrics.SuccessRate && c.TestResults[i].Concurrency > best.Concurrency {
 			best = &c.TestResults[i]
 		}
 	}

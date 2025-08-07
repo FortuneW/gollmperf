@@ -65,3 +65,39 @@ func (c *ConcurrentComparison) GetBestSuccessRate() *ConcurrentTestResult {
 	}
 	return best
 }
+
+// GetBestFirstTokenLatency returns the test result with the lowest average first token latency
+func (c *ConcurrentComparison) GetBestFirstTokenLatency() *ConcurrentTestResult {
+	if len(c.TestResults) == 0 {
+		return nil
+	}
+
+	best := &c.TestResults[0]
+	for i := 1; i < len(c.TestResults); i++ {
+		if c.TestResults[i].Metrics.AverageFirstTokenLatency < best.Metrics.AverageFirstTokenLatency {
+			best = &c.TestResults[i]
+		} else if c.TestResults[i].Metrics.AverageFirstTokenLatency == best.Metrics.AverageFirstTokenLatency && c.TestResults[i].Concurrency > best.Concurrency {
+			best = &c.TestResults[i]
+		}
+	}
+	return best
+}
+
+// GetBestTokensThroughput returns the test result with the highest throughput
+func (c *ConcurrentComparison) GetBestTokensThroughput() *ConcurrentTestResult {
+	if len(c.TestResults) == 0 {
+		return nil
+	}
+
+	best := &c.TestResults[0]
+	for i := 1; i < len(c.TestResults); i++ {
+		if c.TestResults[i].Metrics.TokensPerSecond > best.Metrics.TokensPerSecond {
+			best = &c.TestResults[i]
+		} else if c.TestResults[i].Metrics.TokensPerSecond == best.Metrics.TokensPerSecond && c.TestResults[i].Concurrency > best.Concurrency {
+			best = &c.TestResults[i]
+		}
+	}
+	return best
+}
+
+// GetBestTh returns the test result with the lowest average first token latency

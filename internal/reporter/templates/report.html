@@ -31,7 +31,7 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1500px;
             margin: 0 auto;
         }
 
@@ -92,7 +92,7 @@
 
         .metrics-dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -361,43 +361,40 @@
 
             <!-- Key Comparison Metrics -->
             <div class="metrics-dashboard">
-                {{$bestQPS := index .Concurrent.TestResults 0}}
-                {{range .Concurrent.TestResults}}
-                {{if gt .Metrics.QPS $bestQPS.Metrics.QPS}}
-                {{$bestQPS = .}}
-                {{end}}
-                {{end}}
+ 
                 <div class="metric-card">
                     <div class="metric-category">Best Performance</div>
                     <div class="metric-title">Highest QPS</div>
-                    <div class="metric-value qps">{{printf "%.2f" $bestQPS.Metrics.QPS}}</div>
-                    <div class="detail-label">at {{$bestQPS.Concurrency}} concurrency</div>
+                    <div class="metric-value qps">{{printf "%.2f" .ReporterData.GetBestQPS.Metrics.QPS}}</div>
+                    <div class="detail-label">at {{.ReporterData.GetBestQPS.Concurrency}} concurrency</div>
                 </div>
 
-                {{$bestLatency := index .Concurrent.TestResults 0}}
-                {{range .Concurrent.TestResults}}
-                {{if lt .Metrics.AverageLatency $bestLatency.Metrics.AverageLatency}}
-                {{$bestLatency = .}}
-                {{end}}
-                {{end}}
+                <div class="metric-card">
+                    <div class="metric-category">Best Throughput</div>
+                    <div class="metric-title">Highest Tokens per Second</div>
+                    <div class="metric-value latency">{{printf "%.1f" .ReporterData.GetBestTokensThroughput.Metrics.TokensPerSecond}}</div>
+                    <div class="detail-label">at {{.ReporterData.GetBestTokensThroughput.Concurrency}} concurrency</div>
+                </div>
+
                 <div class="metric-card">
                     <div class="metric-category">Best Response</div>
                     <div class="metric-title">Lowest Latency</div>
-                    <div class="metric-value latency">{{$bestLatency.Metrics.AverageLatency.Milliseconds}}</div>
-                    <div class="detail-label">at {{$bestLatency.Concurrency}} concurrency</div>
+                    <div class="metric-value latency">{{.ReporterData.GetBestLatency.Metrics.AverageLatency.Milliseconds}}</div>
+                    <div class="detail-label">at {{.ReporterData.GetBestLatency.Concurrency}} concurrency</div>
                 </div>
 
-                {{$bestSuccess := index .Concurrent.TestResults 0}}
-                {{range .Concurrent.TestResults}}
-                {{if gt .Metrics.SuccessRate $bestSuccess.Metrics.SuccessRate}}
-                {{$bestSuccess = .}}
-                {{end}}
-                {{end}}
+                <div class="metric-card">
+                    <div class="metric-category">Best TTFT</div>
+                    <div class="metric-title">Lowest Time to First Token</div>
+                    <div class="metric-value latency">{{.ReporterData.GetBestFirstTokenLatency.Metrics.AverageFirstTokenLatency.Milliseconds}}</div>
+                    <div class="detail-label">at {{.ReporterData.GetBestFirstTokenLatency.Concurrency}} concurrency</div>
+                </div>
+
                 <div class="metric-card">
                     <div class="metric-category">Best Reliability</div>
                     <div class="metric-title">Highest Success Rate</div>
-                    <div class="metric-value success-rate">{{printf "%.2f" $bestSuccess.Metrics.SuccessRate}}%</div>
-                    <div class="detail-label">at {{$bestSuccess.Concurrency}} concurrency</div>
+                    <div class="metric-value success-rate">{{printf "%.2f" .ReporterData.GetBestSuccessRate.Metrics.SuccessRate}}%</div>
+                    <div class="detail-label">at {{.ReporterData.GetBestSuccessRate.Concurrency}} concurrency</div>
                 </div>
             </div>
 
@@ -429,17 +426,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{range .Concurrent.TestResults}}
+                            {{range .ReporterData.TestResults}}
                             <tr>
                                 <td>{{.Concurrency}}</td>
                                 <td>{{printf "%.2f" .Metrics.QPS}}</td>
-                                <td>{{printf "%.2f" .Metrics.TokensPerSecond}}</td>
+                                <td>{{printf "%.1f" .Metrics.TokensPerSecond}}</td>
                                 <td>{{.Metrics.AverageLatency.Milliseconds}}</td>
                                 <td>{{.Metrics.LatencyP50.Milliseconds}}</td>
                                 <td>{{.Metrics.LatencyP90.Milliseconds}}</td>
                                 <td>{{.Metrics.LatencyP99.Milliseconds}}</td>
-                                <td>{{printf "%.2f" .Metrics.AverageRequestTokens}}</td>
-                                <td>{{printf "%.2f" .Metrics.AverageResponseTokens}}</td>
+                                <td>{{printf "%.1f" .Metrics.AverageRequestTokens}}</td>
+                                <td>{{printf "%.1f" .Metrics.AverageResponseTokens}}</td>
                                 <td>{{.Metrics.AverageFirstTokenLatency.Milliseconds}}</td>
                                 <td>{{.Metrics.FirstTokenLatencyP50.Milliseconds}}</td>
                                 <td>{{.Metrics.FirstTokenLatencyP90.Milliseconds}}</td>

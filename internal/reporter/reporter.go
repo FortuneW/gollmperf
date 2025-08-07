@@ -17,7 +17,7 @@ var mlog = qlog.GetRLog("reporter")
 
 // ReporterData is a wrapper struct for template data
 type ReporterData struct {
-	Concurrent *ConcurrentComparison `json:"concurrent,omitempty"`
+	ReporterData *ConcurrentComparison `json:"reporter_data,omitempty"`
 }
 
 // Reporter generates reports from analysis results
@@ -169,7 +169,7 @@ func (r *Reporter) GenerateHTMLReport(filename string) error {
 
 	// Create wrapper data for template
 	data := &ReporterData{
-		Concurrent: r.concurrentComparison,
+		ReporterData: r.concurrentComparison,
 	}
 
 	// Execute template with wrapper data

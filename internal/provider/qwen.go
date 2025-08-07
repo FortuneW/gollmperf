@@ -8,12 +8,13 @@ type QwenProvider struct {
 }
 
 // NewQwenProvider creates a new QwenProvider
-func NewQwenProvider(apiKey, endpoint string, timeout time.Duration) *QwenProvider {
+func NewQwenProvider(apiKey, endpoint, model string, timeout time.Duration) *QwenProvider {
 	if endpoint == "" {
 		endpoint = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+		mlog.Infof("Created Qwen provider [%s] with model [%s]", endpoint, model)
 	}
 	return &QwenProvider{
-		oai: NewOpenAIProvider(apiKey, endpoint, timeout),
+		oai: NewOpenAIProvider(apiKey, endpoint, model, timeout),
 	}
 }
 

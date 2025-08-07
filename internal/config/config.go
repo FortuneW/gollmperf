@@ -22,6 +22,7 @@ func GenerateDefaultConfig(filePath string) error {
 	config.Test.Concurrency = 10
 	config.Test.RequestsPerConcurrency = 100
 	config.Test.Timeout = 30 * time.Second
+	config.Test.PerfConcurrencyGroup = []int{1, 2, 4, 8, 16, 20, 32, 40, 48, 64}
 
 	// Add default values for model config
 	config.Model.Name = "${LLM_MODEL_NAME}"
@@ -89,6 +90,7 @@ type TestConfig struct {
 	Concurrency            int           `yaml:"concurrency"`
 	RequestsPerConcurrency int           `yaml:"requests_per_concurrency"`
 	Timeout                time.Duration `yaml:"timeout"`
+	PerfConcurrencyGroup   []int         `yaml:"perf_concurrency_group"`
 }
 
 // SystemPromptTemplate represents the system prompt configuration
@@ -126,7 +128,8 @@ type OutputConfig struct {
 func NewConfig() *Config {
 	return &Config{
 		Test: TestConfig{
-			Concurrency: 1,
+			Concurrency:          1,
+			PerfConcurrencyGroup: []int{},
 		},
 		Model: ModelConfig{},
 		Dataset: DatasetConfig{
@@ -201,6 +204,9 @@ func LoadConfig(configPath string) (*Config, error) {
 		}
 		config.Model.SystemPromptTemplate = systemPromptTemplate
 	}
+
+	PerfConcurrencyGroup := v.GetIntSlice("test.perf_concurrency_group")
+	config.Test.PerfConcurrencyGroup = PerfConcurrencyGroup
 
 	return config, nil
 }

@@ -23,7 +23,7 @@ func TestOpenAIProvider_OpenAI(t *testing.T) {
 	if apiKey == "" {
 		t.Skip("Skipping test: no API key available")
 	}
-	provider := NewOpenAIProvider(apiKey, "", time.Second*10)
+	provider := NewOpenAIProvider(apiKey, "", "gpt-3.5-turbo", time.Second*10)
 	anyParams := AnyParams{
 		"messages": []Message{
 			{
@@ -50,7 +50,7 @@ func TestOpenAIProvider_Qwen(t *testing.T) {
 	if apiKey == "" {
 		t.Skip("Skipping test: no API key available")
 	}
-	provider := NewQwenProvider(apiKey, "", time.Second*10)
+	provider := NewQwenProvider(apiKey, "", "qwen-plus", time.Second*10)
 
 	anyParams := AnyParams{
 		"messages": []Message{
@@ -91,7 +91,7 @@ func TestOpenAIProvider_Streaming(t *testing.T) {
 	if apiKey == "" {
 		t.Skip("Skipping test: no API key available")
 	}
-	provider := NewQwenProvider(apiKey, "", time.Second*10)
+	provider := NewQwenProvider(apiKey, "", "qwen-plus", time.Second*10)
 
 	anyParams := AnyParams{
 		"messages": []Message{

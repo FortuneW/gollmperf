@@ -26,9 +26,10 @@ type OpenAIProvider struct {
 }
 
 // NewOpenAIProvider creates a new OpenAIProvider
-func NewOpenAIProvider(apiKey, endpoint string, timeout time.Duration) *OpenAIProvider {
+func NewOpenAIProvider(apiKey, endpoint, model string, timeout time.Duration) *OpenAIProvider {
 	if endpoint == "" {
 		endpoint = "https://api.openai.com/v1/chat/completions"
+		mlog.Infof("Created OpenAI provider [%s] with model [%s]", endpoint, model)
 	}
 
 	return &OpenAIProvider{

@@ -11,6 +11,7 @@ type RunFlags struct {
 	config.ConfigOverrideFlags
 	ConfigPath string
 	IsStress   bool
+	IsPerf     bool
 }
 
 var runFlags = &RunFlags{}

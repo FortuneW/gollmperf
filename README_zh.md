@@ -106,15 +106,15 @@ gollmperf/
 ### 批量测试
 
 ```bash
-# 使用配置文件进行批量测试
-./gollmperf run --config ./configs/example.yaml
+# 使用--batch参数运行批量测试
+./gollmperf run --config ./configs/example.yaml --batch
 ```
 
 ### 压力测试
 
 ```bash
-# 使用--stress参数运行压力测试模式
-./gollmperf run --stress --config ./configs/example.yaml
+# 运行压力测试
+./gollmperf run --config ./configs/example.yaml 
 ```
 
 ### 性能测试
@@ -132,10 +132,13 @@ gollmperf/
 
 ```bash
   -k, --apikey string     API密钥
+  -b, --batch             运行批量模式，执行数据集中的所有案例
   -d, --dataset string    数据集文件路径
   -e, --endpoint string   端点
   -f, --format string     报告格式 (json, csv, html) (默认为报告文件扩展名)
   -m, --model string      模型名称
+  -p, --perf              运行性能模式，查找不同并发级别下的性能限制
+  -P, --provider string   LLM提供商 (openai, qwen, 等) (默认 "openai")
   -r, --report string     报告文件路径 (输出报告到文件)
 ```
 

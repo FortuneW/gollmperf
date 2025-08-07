@@ -13,9 +13,9 @@ import (
 
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "Run batch or stress test or perf test",
-	Long: `Run batch mode to finish all cases;
-Run stress mode test to find system stability;
+	Short: "Run batch or stress test and perf test",
+	Long: `Run batch test to finish all cases;
+Run stress test to find system stability;
 Run perf mode test to find performance limits in different concurrency levels`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Initialize test context
@@ -47,13 +47,13 @@ Run perf mode test to find performance limits in different concurrency levels`,
 		}
 
 		if !runFlags.IsPerf {
-			runOnceTest(testCtx, runFlags.IsStress)
+			runOnceTest(testCtx, !runFlags.IsBatch)
 		} else {
 			// Run perf test
 			mlog.Infof("Running perf mode with concurrency group: %v", testCtx.Config.Test.PerfConcurrencyGroup)
 			for _, concurrency := range testCtx.Config.Test.PerfConcurrencyGroup {
 				testCtx.Config.Test.Concurrency = concurrency
-				runOnceTest(testCtx, runFlags.IsStress)
+				runOnceTest(testCtx, !runFlags.IsBatch)
 			}
 		}
 	},
@@ -61,8 +61,8 @@ Run perf mode test to find performance limits in different concurrency levels`,
 
 func init() {
 	rootCmd.AddCommand(runCmd)
-	runCmd.Flags().BoolVarP(&runFlags.IsStress, "stress", "s", false, "Run stress mode")
-	runCmd.Flags().BoolVarP(&runFlags.IsPerf, "perf", "p", false, "Run perf mode")
+	runCmd.Flags().BoolVarP(&runFlags.IsBatch, "batch", "b", false, "Run batch mode, for run all case in dataset")
+	runCmd.Flags().BoolVarP(&runFlags.IsPerf, "perf", "p", false, "Run perf mode, for find performance limits in different concurrency levels")
 	runCmd.Flags().StringVarP(&runFlags.ConfigPath, "config", "c", "", "config file (default is ./example.yaml)")
 	runCmd.Flags().StringVarP(&runFlags.Provider, "provider", "P", "openai", "LLM provider (openai, qwen, etc.)")
 	runCmd.Flags().StringVarP(&runFlags.Model, "model", "m", "", "Model name")

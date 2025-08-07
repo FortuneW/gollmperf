@@ -10,7 +10,7 @@ import (
 type RunFlags struct {
 	config.ConfigOverrideFlags
 	ConfigPath string
-	IsStress   bool
+	IsBatch    bool
 	IsPerf     bool
 }
 

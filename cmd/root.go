@@ -8,9 +8,9 @@ import (
 var mlog = qlog.GetRLog("cmd")
 
 var rootCmd = &cobra.Command{
-	Use:   "llmperf",
+	Use:   "gollmperf",
 	Short: "Professional LLM performance testing tool",
-	Long: `LLMPerf is a professional tool for testing (batch/stress) and benchmarking 
+	Long: `goLLMPerf is a professional tool for perf testing (batch/stress) and benchmarking 
 large language models performance with accuracy and precision.`,
 }
 

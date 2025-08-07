@@ -103,18 +103,18 @@ gollmperf/
 
 ## Usage
 
-### Batch Testing
-
-```bash
-# Using configuration file for batch mode
-./gollmperf run --config ./configs/example.yaml
-```
-
 ### Stress Testing
 
 ```bash
-# Run stress test mode with --stress flag
-./gollmperf run --stress --config ./configs/example.yaml
+# Run stress testing testing
+./gollmperf run --config ./configs/example.yaml 
+```
+
+### Batch Testing
+
+```bash
+# Run batch testing with --batch flag
+./gollmperf run --config ./configs/example.yaml --batch
 ```
 
 ### Performance Testing
@@ -143,14 +143,6 @@ In performance testing mode, the tool will run tests across multiple concurrency
 # Command args override config file fields
 ./gollmperf run --config ./configs/example.yaml --model gpt-3.5-turbo --dataset ./examples/test_cases.jsonl --report result.json --format json
 ```
-
-### Comparative Testing
-
-```bash
-# Comparative testing is not yet implemented but planned for future releases
-# ./gollmperf compare --configs gpt35.yaml,gpt4.yaml,claude.yaml
-```
-
 
 ### Usage Examples
 
@@ -294,8 +286,8 @@ The project has completed core functionality development, including:
 - ✅ OpenAI provider implementation
 - ✅ Qwen provider implementation
 - ✅ Comprehensive metrics collection with error categorization
-- ✅ Batch testing mode
-- ✅ Stress testing mode
+- ✅ Batch testing
+- ✅ Stress testing
 - ✅ Performance testing mode
 
 ## Future Optimization Directions

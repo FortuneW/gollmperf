@@ -1,6 +1,7 @@
 package reporter
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -127,79 +128,18 @@ func (r *Reporter) GenerateCSVReport(filename string) error {
 	return nil
 }
 
+//go:embed templates/report.html
+var templateFS embed.FS
+
 // GenerateHTMLReport generates an HTML report
 func (r *Reporter) GenerateHTMLReport(filename string) error {
-	htmlTemplate := `
-<!DOCTYPE html>
-<html>
-<head>
-    <title>gollmperf Performance Report</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        h1, h2 { color: #333; }
-        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .metric-value { font-weight: bold; }
-    </style>
-</head>
-<body>
-    <h1>gollmperf Performance Report</h1>
-    
-    <h2>Summary</h2>
-    <table>
-        <tr><th>Metric</th><th>Value</th></tr>
-        <tr><td>Total Duration</td><td class="metric-value">{{.TotalDuration.Milliseconds}}</td></tr>
-        <tr><td>Total Requests</td><td class="metric-value">{{.TotalRequests}}</td></tr>
-        <tr><td>Successful Requests</td><td class="metric-value">{{.SuccessfulRequests}}</td></tr>
-        <tr><td>Failed Requests</td><td class="metric-value">{{.FailedRequests}}</td></tr>
-        <tr><td>Success Rate</td><td class="metric-value">{{printf "%.2f" .SuccessRate}}%</td></tr>
-    </table>
-    
-    {{if gt .SuccessfulRequests 0}}
-    <h2>Performance Metrics</h2>
-    <table>
-        <tr><th>Metric</th><th>Value</th></tr>
-        <tr><td>QPS</td><td class="metric-value">{{printf "%.2f" .QPS}}</td></tr>
-        <tr><td>Tokens per second</td><td class="metric-value">{{printf "%.2f" .TokensPerSecond}}</td></tr>
-        <tr><td>Average Latency</td><td class="metric-value">{{.AverageLatency.Milliseconds}}</td></tr>
-        <tr><td>Latency P50</td><td class="metric-value">{{.LatencyP50.Milliseconds}}</td></tr>
-        <tr><td>Latency P90</td><td class="metric-value">{{.LatencyP90.Milliseconds}}</td></tr>
-        <tr><td>Latency P99</td><td class="metric-value">{{.LatencyP99.Milliseconds}}</td></tr>
-    </table>
-    
-    <h2>Token Metrics</h2>
-    <table>
-        <tr><th>Metric</th><th>Value</th></tr>
-        <tr><td>Average Request Tokens</td><td class="metric-value">{{printf "%.2f" .AverageRequestTokens}}</td></tr>
-        <tr><td>Average Response Tokens</td><td class="metric-value">{{printf "%.2f" .AverageResponseTokens}}</td></tr>
-    </table>
-    
-    {{if gt .AverageFirstTokenLatency 0}}
-    <h2>Streaming Metrics</h2>
-    <table>
-        <tr><th>Metric</th><th>Value</th></tr>
-        <tr><td>Average First Token Latency</td><td class="metric-value">{{.AverageFirstTokenLatency.Milliseconds}}</td></tr>
-        <tr><td>First Token Latency P50</td><td class="metric-value">{{.FirstTokenLatencyP50.Milliseconds}}</td></tr>
-        <tr><td>First Token Latency P90</td><td class="metric-value">{{.FirstTokenLatencyP90.Milliseconds}}</td></tr>
-        <tr><td>First Token Latency P99</td><td class="metric-value">{{.FirstTokenLatencyP99.Milliseconds}}</td></tr>
-    </table>
-    {{end}}
-    {{end}}
-    
-    {{if .ErrorTypeCounts}}
-    <h2>Error Distribution</h2>
-    <table>
-        <tr><th>Error</th><th>Count</th></tr>
-        {{range $error, $count := .ErrorTypeCounts}}
-        <tr><td>{{$error}}</td><td>{{$count}}</td></tr>
-        {{end}}
-    </table>
-    {{end}}
-</body>
-</html>`
+	// Read the template file from embedded filesystem
+	templateData, err := templateFS.ReadFile("templates/report.html")
+	if err != nil {
+		return fmt.Errorf("failed to read template file from embedded filesystem: %w", err)
+	}
 
-	tmpl, err := template.New("report").Parse(htmlTemplate)
+	tmpl, err := template.New("report").Parse(string(templateData))
 	if err != nil {
 		return fmt.Errorf("failed to parse template: %w", err)
 	}

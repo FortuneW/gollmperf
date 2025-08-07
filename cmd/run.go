@@ -9,6 +9,7 @@ import (
 	"github.com/FortuneW/gollmperf/internal/engine"
 	"github.com/FortuneW/gollmperf/internal/reporter"
 	"github.com/FortuneW/gollmperf/internal/utils"
+	"github.com/FortuneW/qlog"
 	"github.com/spf13/cobra"
 )
 
@@ -32,26 +33,29 @@ Run perf mode test to find performance limits in different concurrency levels`,
 				mlog.Errorf("Failed to run test (stress mode: %v): %v", isStress, err)
 				os.Exit(1)
 			}
-			// Analyze results
-			resultAnalyzer := analyzer.NewAnalyzer(col)
-			// Get metrics
-			metrics := resultAnalyzer.Analyze()
 
-			// Generate console report
-			r.AddNewMetrics(testCtx.Config.Test.Concurrency, metrics)
-			r.GenerateConsoleReport()
+			if !runFlags.NoReport {
+				// Analyze results
+				resultAnalyzer := analyzer.NewAnalyzer(col)
+				// Get metrics
+				metrics := resultAnalyzer.Analyze()
 
-			// Generate file report if requested
-			if err := r.GenerateFileReport(testCtx.Config.Output.Path, testCtx.Config.Output.Format); err != nil {
-				mlog.Errorf("failed to generate file report [%s]: %v", testCtx.Config.Output.Path, err)
-			}
+				// Generate console report
+				r.AddNewMetrics(testCtx.Config.Test.Concurrency, metrics)
+				r.GenerateConsoleReport()
 
-			// Save batch results in JSONL format if requested and in batch testing
-			if !isStress && testCtx.Config.Output.BatchResultPath != "" {
-				if err := utils.SaveBatchResultsToJSONL(col.GetAllResults(), testCtx.Config.Output.BatchResultPath); err != nil {
-					mlog.Errorf("failed to save batch results to JSONL file [%s]: %v", testCtx.Config.Output.BatchResultPath, err)
-				} else {
-					mlog.Infof("Batch results saved to %s", testCtx.Config.Output.BatchResultPath)
+				// Generate file report if requested
+				if err := r.GenerateFileReport(testCtx.Config.Output.Path, testCtx.Config.Output.Format); err != nil {
+					mlog.Errorf("failed to generate file report [%s]: %v", testCtx.Config.Output.Path, err)
+				}
+
+				// Save batch results in JSONL format if requested and in batch testing
+				if !isStress && testCtx.Config.Output.BatchResultPath != "" {
+					if err := utils.SaveBatchResultsToJSONL(col.GetAllResults(), testCtx.Config.Output.BatchResultPath); err != nil {
+						mlog.Errorf("failed to save batch results to JSONL file [%s]: %v", testCtx.Config.Output.BatchResultPath, err)
+					} else {
+						mlog.Infof("Batch results saved to %s", testCtx.Config.Output.BatchResultPath)
+					}
 				}
 			}
 		}
@@ -71,6 +75,7 @@ Run perf mode test to find performance limits in different concurrency levels`,
 
 func init() {
 	rootCmd.AddCommand(runCmd)
+	runCmd.Flags().BoolVarP(&runFlags.NoReport, "no-report", "", false, "Disable report generation")
 	runCmd.Flags().BoolVarP(&runFlags.IsBatch, "batch", "b", false, "Run batch mode, for run all case in dataset")
 	runCmd.Flags().BoolVarP(&runFlags.IsPerf, "perf", "p", false, "Run perf mode, for find performance limits in different concurrency levels")
 	runCmd.Flags().StringVarP(&runFlags.BatchResultFile, "batch-result", "", "", "Batch results file path (output batch results to JSONL file)")
@@ -91,7 +96,8 @@ func runTest(testCtx *TestContext, isStress bool) (*collector.Collector, error) 
 
 	// Run Test
 	if isStress {
-		mlog.Infof("Running stress mode with provider: %s [%s], model: [%s]",
+		defer qlog.TimeTrackWithDebug(mlog, "RunStress")()
+		mlog.Debugf("Running stress mode with provider: %s [%s], model: [%s]",
 			testCtx.Config.Model.Provider, testCtx.Config.Model.Endpoint, testCtx.Config.Model.Name)
 		results, err := testEngine.RunStress(testCtx.Dataset)
 		if err != nil {
@@ -99,7 +105,8 @@ func runTest(testCtx *TestContext, isStress bool) (*collector.Collector, error) 
 		}
 		return collector.NewCollector(results), nil
 	} else {
-		mlog.Infof("Running batch mode with provider: %s [%s], model: [%s]",
+		defer qlog.TimeTrackWithDebug(mlog, "RunBatch")()
+		mlog.Debugf("Running batch mode with provider: %s [%s], model: [%s]",
 			testCtx.Config.Model.Provider, testCtx.Config.Model.Endpoint, testCtx.Config.Model.Name)
 		results, err := testEngine.RunBatch(testCtx.Dataset)
 		if err != nil {

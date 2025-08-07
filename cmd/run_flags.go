@@ -12,6 +12,7 @@ type RunFlags struct {
 	ConfigPath string
 	IsBatch    bool
 	IsPerf     bool
+	NoReport   bool
 }
 
 var runFlags = &RunFlags{}

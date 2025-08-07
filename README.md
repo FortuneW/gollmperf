@@ -27,6 +27,7 @@ gollmperf is a professional-grade Large Language Model (LLM) performance testing
 ### 3. Advanced Testing Modes
 - **Basic Testing**: Standard performance testing
 - **Stress Testing**: Gradually increase load until system limits
+- **Performance Testing**: Run tests across multiple concurrency levels to find optimal performance parameters
 - **Stability Testing**: Long-term continuous runtime testing
 - **Comparative Testing**: Multi-model performance comparison
 - **Scenario Testing**: Specific business scenario simulation
@@ -116,6 +117,15 @@ gollmperf/
 ./gollmperf run --stress --config ./configs/example.yaml
 ```
 
+### Performance Testing
+
+```bash
+# Run performance test mode with --perf flag
+./gollmperf run --perf --config ./configs/example.yaml
+```
+
+In performance testing mode, the tool will run tests across multiple concurrency levels defined in the `perf_concurrency_group` configuration parameter to find optimal performance parameters.
+
 ### Command args can override config file fields
 
 `./gollmperf run -h`
@@ -200,6 +210,9 @@ test:
   
   # Timeout for each request
   timeout: 30s
+  
+  # Concurrency levels for performance testing mode
+  perf_concurrency_group: [1, 2, 4, 8, 16, 20, 32, 40, 48, 64]
 
 # Model configuration
 model:
@@ -283,7 +296,7 @@ The project has completed core functionality development, including:
 - ✅ Comprehensive metrics collection with error categorization
 - ✅ Batch testing mode
 - ✅ Stress testing mode
-- ✅ Performance testing mode (planned implementation)
+- ✅ Performance testing mode
 
 ## Future Optimization Directions
 

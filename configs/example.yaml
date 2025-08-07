@@ -10,6 +10,9 @@ test:
   
   # Number of concurrent requests
   concurrency: 10
+
+  # Number of requests per concurrency level
+  requests_per_concurrency: 100
   
   # Timeout for each request
   timeout: 30s

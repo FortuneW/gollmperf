@@ -20,6 +20,7 @@ func GenerateDefaultConfig(filePath string) error {
 	config.Test.Duration = 60 * time.Second
 	config.Test.Warmup = 10 * time.Second
 	config.Test.Concurrency = 10
+	config.Test.RequestsPerConcurrency = 100
 	config.Test.Timeout = 30 * time.Second
 
 	// Add default values for model config
@@ -83,10 +84,11 @@ type Config struct {
 
 // TestConfig represents test configuration
 type TestConfig struct {
-	Duration    time.Duration `yaml:"duration"`
-	Warmup      time.Duration `yaml:"warmup"`
-	Concurrency int           `yaml:"concurrency"`
-	Timeout     time.Duration `yaml:"timeout"`
+	Duration               time.Duration `yaml:"duration"`
+	Warmup                 time.Duration `yaml:"warmup"`
+	Concurrency            int           `yaml:"concurrency"`
+	RequestsPerConcurrency int           `yaml:"requests_per_concurrency"`
+	Timeout                time.Duration `yaml:"timeout"`
 }
 
 // SystemPromptTemplate represents the system prompt configuration

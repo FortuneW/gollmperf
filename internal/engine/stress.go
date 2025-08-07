@@ -32,16 +32,21 @@ func (e *Engine) RunStress(dataset []provider.AnyParams) ([]*Result, error) {
 	// Start worker goroutines
 	concurrency := e.getConcurrency()
 	wg := e.startWorkers(concurrency, func(workerID int, wg *sync.WaitGroup) {
-		// Each worker runs for the specified duration
+		// Each worker runs until either duration is reached or requests per concurrency is met
 		workerStartTime := time.Now()
 		reqIndex := workerID // Start with different index for each worker
+		requestsCompleted := 0
+		maxRequests := e.config.Test.RequestsPerConcurrency
 
-		for time.Since(workerStartTime) < testDuration {
+		for (testDuration <= 0 || time.Since(workerStartTime) < testDuration) &&
+			(maxRequests <= 0 || requestsCompleted < maxRequests) {
+
 			// Get a request from dataset (round-robin)
 			req := dataset[reqIndex%len(dataset)]
 			reqIndex++
 
 			e.executeWorkerJob(req, resultsChan)
+			requestsCompleted++
 
 			// Small delay to prevent overwhelming the system
 			time.Sleep(10 * time.Millisecond)

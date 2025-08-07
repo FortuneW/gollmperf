@@ -21,7 +21,7 @@ func TestLoadDataset(t *testing.T) {
 	assert.NoError(t, err)
 	file.Close()
 
-	dataset, err := LoadDataset(file.Name(), "jsonl")
+	dataset, err := LoadDataset(file.Name(), "jsonl", "")
 	assert.NoError(t, err)
 	assert.Len(t, dataset, 2)
 
@@ -29,7 +29,7 @@ func TestLoadDataset(t *testing.T) {
 }
 
 func TestLoadExamplesCaseFile(t *testing.T) {
-	dataset, err := LoadDataset("../../examples/test_cases.jsonl", "jsonl")
+	dataset, err := LoadDataset("../../examples/test_cases.jsonl", "jsonl", "")
 	assert.NoError(t, err)
 	t.Log(dataset)
 }

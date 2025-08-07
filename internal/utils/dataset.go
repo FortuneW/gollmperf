@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/FortuneW/gollmperf/internal/provider"
@@ -27,11 +28,52 @@ func putBuffer(buf []byte) {
 	bufferPool.Put(buf)
 }
 
+// addSystemPromptToMessages adds system prompt to the beginning of messages array
+func addSystemPromptToMessages(reqCase provider.AnyParams, systemPrompt string) provider.AnyParams {
+	// Add system prompt to the beginning of messages array if it exists
+	if strings.TrimSpace(systemPrompt) != "" {
+		if messages, ok := reqCase["messages"].([]interface{}); ok {
+			// Handle interface type messages
+			// Check if the first message is already a system message
+			if len(messages) > 0 {
+				if msgMap, ok := messages[0].(map[string]interface{}); ok {
+					if role, ok := msgMap["role"].(string); ok && role == "system" {
+						// Replace existing system message
+						msgMap["content"] = systemPrompt
+						messages[0] = msgMap
+						reqCase["messages"] = messages
+						return reqCase
+					}
+				}
+			}
+			// Create a new messages array including system prompt and original messages
+			newMessages := make([]interface{}, len(messages)+1)
+			newMessages[0] = map[string]interface{}{
+				"role":    "system",
+				"content": systemPrompt,
+			}
+			copy(newMessages[1:], messages)
+			reqCase["messages"] = newMessages
+		}
+	}
+	return reqCase
+}
+
 // LoadDataset loads test data from a file
-func LoadDataset(filePath, fileType string) ([]provider.AnyParams, error) {
+func LoadDataset(filePath, fileType string, systemPrompt string) ([]provider.AnyParams, error) {
 	switch fileType {
 	case "jsonl":
-		return loadJSONLDataset(filePath)
+		requests, err := loadJSONLDataset(filePath)
+		if err != nil {
+			return nil, err
+		}
+		// Add system prompt to all requests if provided
+		if strings.TrimSpace(systemPrompt) != "" {
+			for i := range requests {
+				requests[i] = addSystemPromptToMessages(requests[i], systemPrompt)
+			}
+		}
+		return requests, nil
 	default:
 		return nil, fmt.Errorf("unsupported dataset type: %s", fileType)
 	}
@@ -80,25 +122,4 @@ func loadJSONLDataset(filePath string) ([]provider.AnyParams, error) {
 	}
 
 	return requests, nil
-}
-
-// CreateDefaultDataset creates a default dataset for testing
-func CreateDefaultDataset() []provider.AnyParams {
-	return []provider.AnyParams{
-		{
-			"messages": []provider.Message{
-				{Role: "user", Content: "Write a short poem about programming."},
-			},
-		},
-		{
-			"messages": []provider.Message{
-				{Role: "user", Content: "Explain what is a neural network in simple terms."},
-			},
-		},
-		{
-			"messages": []provider.Message{
-				{Role: "user", Content: "How to optimize a Python function for better performance?"},
-			},
-		},
-	}
 }

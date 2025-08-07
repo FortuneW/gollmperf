@@ -5,8 +5,11 @@ import (
 	"os"
 	"time"
 
+	"github.com/FortuneW/qlog"
 	"github.com/spf13/viper"
 )
+
+var mlog = qlog.GetRLog("config")
 
 // Config represents the complete configuration for LLMPerf
 type Config struct {
@@ -24,14 +27,23 @@ type TestConfig struct {
 	Timeout     time.Duration `yaml:"timeout"`
 }
 
+// SystemPromptTemplate represents the system prompt configuration
+// It supports either direct content or a file path
+type SystemPromptTemplate struct {
+	Enable  bool   `yaml:"enable"`
+	Content string `yaml:"content"`
+	Path    string `yaml:"path"`
+}
+
 // ModelConfig represents model configuration
 type ModelConfig struct {
-	Name           string                 `yaml:"name"`
-	Provider       string                 `yaml:"provider"`
-	Endpoint       string                 `yaml:"endpoint"`
-	ApiKey         string                 `yaml:"api_key"`
-	Headers        map[string]string      `yaml:"headers"`
-	ParamsTemplate map[string]interface{} `yaml:"-"`
+	Name                 string                 `yaml:"name"`
+	Provider             string                 `yaml:"provider"`
+	Endpoint             string                 `yaml:"endpoint"`
+	ApiKey               string                 `yaml:"api_key"`
+	Headers              map[string]string      `yaml:"headers"`
+	ParamsTemplate       map[string]interface{} `yaml:"-"`
+	SystemPromptTemplate SystemPromptTemplate   `yaml:"system_prompt_template"`
 }
 
 // DatasetConfig represents dataset configuration
@@ -111,6 +123,19 @@ func LoadConfig(configPath string) (*Config, error) {
 	// Handle ParamsTemplate
 	if paramsTemplate := v.GetStringMap("model.params_template"); paramsTemplate != nil {
 		config.Model.ParamsTemplate = paramsTemplate
+	}
+
+	// Handle SystemPromptTemplate
+	var systemPromptTemplate SystemPromptTemplate
+	if err := v.UnmarshalKey("model.system_prompt_template", &systemPromptTemplate); err != nil {
+		mlog.Warnf("Failed to unmarshal system_prompt_template: %v", err)
+	} else {
+		if systemPromptTemplate.Enable {
+			if systemPromptTemplate.Content != "" && systemPromptTemplate.Path != "" {
+				mlog.Warnf("Both content and path are set for system_prompt_template, content will take precedence")
+			}
+		}
+		config.Model.SystemPromptTemplate = systemPromptTemplate
 	}
 
 	return config, nil

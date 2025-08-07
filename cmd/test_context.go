@@ -50,8 +50,11 @@ func InitializeTest(flags *RunFlags) *TestContext {
 		os.Exit(1)
 	}
 
-	// Load dataset
-	dataset, err := utils.LoadDataset(cfg.Dataset.Path, cfg.Dataset.Type)
+	// Get system prompt
+	systemPrompt := utils.GetSystemPrompt(&cfg.Model.SystemPromptTemplate)
+
+	// Load dataset with system prompt
+	dataset, err := utils.LoadDataset(cfg.Dataset.Path, cfg.Dataset.Type, systemPrompt)
 	if err != nil {
 		mlog.Errorf("Error loading dataset from %s: %v", cfg.Dataset.Path, err)
 		os.Exit(1)

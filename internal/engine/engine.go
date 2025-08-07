@@ -105,7 +105,7 @@ func (e *Engine) runWarmup(dataset []provider.AnyParams) (err error) {
 		go func(workerID int) {
 			defer wg.Done()
 			startTime := time.Now()
-			reqIndex := workerID // 每个worker起始索引不同，避免请求重复
+			reqIndex := workerID // Each worker has a different starting index to avoid request repetition
 
 			for time.Since(startTime) < warmupDuration {
 				req := dataset[reqIndex%len(dataset)]

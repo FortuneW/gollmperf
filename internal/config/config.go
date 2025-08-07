@@ -5,9 +5,71 @@ import (
 	"os"
 	"time"
 
+	"gopkg.in/yaml.v2"
+
 	"github.com/FortuneW/qlog"
 	"github.com/spf13/viper"
 )
+
+// GenerateDefaultConfig generates a default configuration file
+func GenerateDefaultConfig(filePath string) error {
+	// Create a new config with default values
+	config := NewConfig()
+
+	// Add default values for test config
+	config.Test.Duration = 60 * time.Second
+	config.Test.Warmup = 10 * time.Second
+	config.Test.Concurrency = 10
+	config.Test.Timeout = 30 * time.Second
+
+	// Add default values for model config
+	config.Model.Name = "${LLM_MODEL_NAME}"
+	config.Model.Provider = "openai"
+	config.Model.Endpoint = "${LLM_API_ENDPOINT}"
+	config.Model.ApiKey = "${LLM_API_KEY}"
+	config.Model.Headers = map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	// Add default values for system_prompt_template
+	config.Model.SystemPromptTemplate = SystemPromptTemplate{
+		Enable:  false,
+		Content: "You are a helpful assistant.",
+		Path:    "./examples/system_prompt.md",
+	}
+
+	// Add default values for model params
+	config.Model.ParamsTemplate = map[string]interface{}{
+		"stream": true,
+		"stream_options": map[string]interface{}{
+			"include_usage": true,
+		},
+		"extra_body": map[string]interface{}{
+			"enable_thinking": false,
+		},
+	}
+
+	// Add default values for dataset
+	config.Dataset.Path = "./examples/test_cases.jsonl"
+
+	// Add default values for output
+	config.Output.Path = "./results/report.html"
+
+	// Marshal config to YAML
+	data, err := yaml.Marshal(config)
+	if err != nil {
+		return fmt.Errorf("failed to marshal config to YAML: %w", err)
+	}
+
+	// Write to file
+	if err := os.WriteFile(filePath, data, 0644); err != nil {
+		return fmt.Errorf("failed to write config file: %w", err)
+	}
+
+	return nil
+}
+
+// Previously existing code
 
 var mlog = qlog.GetRLog("config")
 

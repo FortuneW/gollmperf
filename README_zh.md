@@ -1,10 +1,7 @@
 <!-- markdownlint-disable MD001 MD041 -->
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./docs/assets/logos/png.jpg">
-    <img alt="gollmperf" src="./docs/assets/logos/logo1.png" width=55%>
-  </picture>
-</p>
+<center>
+<img alt="gollmperf" src="./docs/assets/logos/logo1.png" width=50%>
+</center>
 
 # gollmperf - 专业LLM性能测试工具
 

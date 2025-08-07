@@ -15,16 +15,36 @@ import (
 
 var mlog = qlog.GetRLog("reporter")
 
+// ReporterData is a wrapper struct for template data
+type ReporterData struct {
+	// For single test results
+	*analyzer.Metrics
+
+	// For concurrent test comparisons
+	Concurrent       *ConcurrentComparison `json:"concurrent,omitempty"`
+	IsConcurrentTest bool                  `json:"is_concurrent_test"`
+}
+
 // Reporter generates reports from analysis results
 type Reporter struct {
-	metrics *analyzer.Metrics
+	metrics    *analyzer.Metrics
+	concurrent *ConcurrentComparison
 }
 
 // NewReporter creates a new reporter
-func NewReporter(metrics *analyzer.Metrics) *Reporter {
+func NewReporter() *Reporter {
 	return &Reporter{
-		metrics: metrics,
+		concurrent: &ConcurrentComparison{},
 	}
+}
+
+// AddNewMetrics adds new metrics to the reporter
+func (r *Reporter) AddNewMetrics(concurrency int, metrics *analyzer.Metrics) {
+	r.concurrent.TestResults = append(r.concurrent.TestResults, ConcurrentTestResult{
+		Concurrency: concurrency,
+		Metrics:     metrics,
+	})
+	r.metrics = metrics // current metrics
 }
 
 // GenerateConsoleReport generates a console report
@@ -150,7 +170,15 @@ func (r *Reporter) GenerateHTMLReport(filename string) error {
 	}
 	defer file.Close()
 
-	if err := tmpl.Execute(file, r.metrics); err != nil {
+	// Create wrapper data for template
+	data := &ReporterData{
+		Metrics:          r.metrics,
+		Concurrent:       r.concurrent,
+		IsConcurrentTest: r.concurrent != nil,
+	}
+
+	// Execute template with wrapper data
+	if err := tmpl.Execute(file, data); err != nil {
 		return fmt.Errorf("failed to execute template: %w", err)
 	}
 

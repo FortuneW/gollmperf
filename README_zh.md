@@ -201,6 +201,8 @@ export LLM_MODEL_NAME="qwen-plus"
 ```
 **默认当前目录得到一个 ./results/report.html 报告文件**
 
+![report.html](./docs/assets/reporter_case/reporter_case.png)
+
 ## 配置文件示例
 
 ```yaml

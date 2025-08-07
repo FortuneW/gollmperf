@@ -195,6 +195,8 @@ The results are as follows:
 ```
 **By default, a ./results/report.html report file will be generated in the current directory**
 
+![report.html](./docs/assets/reporter_case/reporter_case.png)
+
 ## Configuration Example
 
 ```yaml

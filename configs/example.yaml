@@ -45,7 +45,7 @@ model:
   # 1. Direct content (using content field)
   # 2. File path (using path field, content takes precedence if both are specified)
   system_prompt_template:
-    enable: true
+    enable: false
     content: |
       You are a helpful assistant.
     path: ./examples/system_prompt.md

@@ -21,14 +21,29 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.21'
+          go-version: '1.23'
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
       - name: Get tag name
         id: tag
         run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
+      - name: Run tests
+        run: |
+          go test -v ./...
+
       - name: Build for multiple platforms
         run: |
+          set -e  # Exit on any error
           mkdir -p releases
           platforms=("linux/amd64" "linux/arm64" "darwin/amd64" "darwin/arm64" "windows/amd64")
           for platform in "${platforms[@]}"; do
@@ -52,17 +67,34 @@ jobs:
             cp "$binary_name" releases/tmp/gollmperf/
             
             # Copy config files
-            cp -r configs/ releases/tmp/gollmperf/
+            mkdir -p releases/tmp/gollmperf/configs
+            cp configs/example.yaml releases/tmp/gollmperf/configs/
             
             # Copy example files
-            cp -r examples/ releases/tmp/gollmperf/
+            mkdir -p releases/tmp/gollmperf/examples
+            cp examples/test_cases.jsonl releases/tmp/gollmperf/examples/
             
             # Copy README files
             cp README.md releases/tmp/gollmperf/
-            cp README_zh.md releases/tmp/gollmperf/
+            if [ -d "docs/assets/logos" ]; then
+              mkdir -p releases/tmp/gollmperf/docs/assets/logos
+              cp ./docs/assets/logos/logo1.png releases/tmp/gollmperf/docs/assets/logos/
+            fi
+            if [ -d "docs/assets/reporter_case" ]; then
+              mkdir -p releases/tmp/gollmperf/docs/assets/reporter_case
+              cp ./docs/assets/reporter_case/reporter_case.png releases/tmp/gollmperf/docs/assets/reporter_case/
+            fi
             
-            # Copy LICENSE file
-            cp LICENSE releases/tmp/gollmperf/
+            # Copy Chinese README if it exists
+            if [ -f "README_zh.md" ]; then
+              cp README_zh.md releases/tmp/gollmperf/
+            fi
+            
+            # Copy and update LICENSE if it exists
+            if [ -f "LICENSE" ]; then
+              CURRENT_YEAR=$(date +%Y)
+              sed "s/Copyright \[2025\]/Copyright ${CURRENT_YEAR}/g" LICENSE > releases/tmp/gollmperf/LICENSE
+            fi
             
             # Create package
             cd releases/tmp

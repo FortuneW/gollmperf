@@ -58,7 +58,6 @@ type Metrics struct {
 
 	// Throughput metrics
 	QPS             Float64 `json:"qps"`
-	TotalTokens     int     `json:"total_tokens"`
 	TokensPerSecond Float64 `json:"tokens_per_second"`
 
 	// Token metrics
@@ -154,13 +153,12 @@ func (a *Analyzer) Analyze() *Metrics {
 		metrics.LatencyP99 = Duration(latencies[int(float64(len(latencies))*0.99)])
 
 		// Token metrics
-		metrics.TotalTokens = totalRequestTokens + totalResponseTokens
 		metrics.AverageRequestTokens = Float64(totalRequestTokens) / Float64(len(successfulResults))
 		metrics.AverageResponseTokens = Float64(totalResponseTokens) / Float64(len(successfulResults))
 
 		// Tokens per second
 		if metrics.TotalDuration > 0 {
-			metrics.TokensPerSecond = Float64(metrics.TotalTokens) / Float64(metrics.TotalDuration.Seconds())
+			metrics.TokensPerSecond = Float64(totalResponseTokens) / Float64(metrics.TotalDuration.Seconds())
 		}
 
 		// First token latency metrics (if available)

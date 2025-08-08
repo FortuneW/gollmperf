@@ -92,3 +92,4 @@ CLAUDE.md
 results/
 .claude/
 test.yaml
+test.jsonl

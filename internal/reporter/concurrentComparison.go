@@ -106,4 +106,7 @@ func (c *ConcurrentComparison) GetBestTokensThroughput() *ConcurrentTestResult {
 	return best
 }
 
-// GetBestTh returns the test result with the lowest average first token latency
+// GetQPSBottleneck returns the concurrency level at which QPS bottleneck occurs
+func (c *ConcurrentComparison) GetQPSBottleneck() *BottleneckResult {
+	return c.DetectQPSBottleneck()
+}

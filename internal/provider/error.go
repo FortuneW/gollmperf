@@ -65,6 +65,7 @@ func isNetworkError(err error) (bool, string) {
 		"no such host",
 		"i/o timeout",
 		"context deadline exceeded",
+		"closed by the remote host",
 	}
 
 	for _, indicator := range networkIndicators {

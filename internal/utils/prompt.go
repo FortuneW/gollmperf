@@ -13,6 +13,7 @@ var mlog = qlog.GetRLog("utils")
 // GetSystemPrompt retrieves system prompt content based on configuration
 // If both content and path are set, content takes precedence
 func GetSystemPrompt(cfg *config.SystemPromptTemplate) string {
+
 	// If enable is false, return empty string
 	if !cfg.Enable {
 		return ""

@@ -10,17 +10,25 @@ import (
 
 var stressLog = qlog.GetRLog("engine.stress")
 
+var onceWarmup sync.Once
+
 func (e *Engine) RunStress(dataset []provider.AnyParams) ([]*Result, error) {
 	// Warmup phase
+	var err error
+
 	if e.config.Test.Warmup > 0 {
-		stressLog.Infof("Starting warmup for %v...", e.config.Test.Warmup)
-		if err := e.runWarmup(dataset); err != nil {
+		onceWarmup.Do(func() {
+			stressLog.Infof("Starting warmup for %v...", e.config.Test.Warmup)
+			err = e.runWarmup(dataset)
+		})
+		if err != nil {
 			return nil, err
 		}
 	}
 
 	// Actual stress test
-	stressLog.Infof("Starting stress testing for %v with concurrency %d...", e.config.Test.Duration, e.config.Test.Concurrency)
+	stressLog.Infof("Starting stress testing for %v or %d requests/concurrency with concurrency %d...",
+		e.config.Test.Duration, e.config.Test.RequestsPerConcurrency, e.config.Test.Concurrency)
 
 	// Create channel for results
 	resultsChan := make(chan *Result, 1000) // Buffered channel to prevent blocking

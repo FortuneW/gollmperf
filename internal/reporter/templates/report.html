@@ -31,7 +31,7 @@
         }
 
         .container {
-            max-width: 1500px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
@@ -154,6 +154,12 @@
 
         .metric-value.qps {
             color: var(--info-color);
+        }
+
+        .bottleneck-qps {
+            background-color: var(--success-color);
+            color: white;
+            font-weight: bold;
         }
 
         .metric-value.latency {
@@ -450,6 +456,7 @@
                         .ReporterData.GetBestSuccessRate.Metrics.SuccessRate}}%</div>
                     <div class="detail-label">at {{.ReporterData.GetBestSuccessRate.Concurrency}} concurrency</div>
                 </div>
+
             </div>
 
             <!-- Detailed Comparison Table -->
@@ -488,7 +495,9 @@
                                 <td class="{{if gt .Metrics.FailedRequests 0}}error-count{{else}}success-count{{end}}">
                                     {{.Metrics.SuccessfulRequests}}/{{.Metrics.TotalRequests}}</td>
                                 <td>{{.Metrics.TotalDuration.Milliseconds}}ms</td>
-                                <td>{{printf "%.2f" .Metrics.QPS}}</td>
+                                <td
+                                    class="{{if eq .Concurrency $.ReporterData.GetBestQPS.Concurrency}}bottleneck-qps{{end}}">
+                                    {{printf "%.2f" .Metrics.QPS}}</td>
                                 <td>{{printf "%.1f" .Metrics.TokensPerSecond}}</td>
                                 <td>{{.Metrics.AverageLatency.Milliseconds}}</td>
                                 <td>{{.Metrics.LatencyP50.Milliseconds}}</td>

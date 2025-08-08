@@ -52,6 +52,7 @@ mkdir -p releases
 
 # Build the binary without CGO
 echo "Building gollmperf for ${OS}/${ARCH}..."
+go mod tidy
 CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -o gollmperf .
 
 # If not packaging, exit here

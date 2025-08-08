@@ -93,4 +93,6 @@ results/
 .claude/
 test.yaml
 test.jsonl
+test.*
 releases
+gollmperf-*-*

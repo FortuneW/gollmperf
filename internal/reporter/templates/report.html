@@ -460,23 +460,6 @@
                     <div class="detail-label">at {{.ReporterData.GetBestFirstTokenLatency.Concurrency}} concurrency
                     </div>
                 </div>
-
-                <div class="metric-card">
-                    <div class="metric-category">Best Reliability</div>
-                    <div class="metric-title">Highest Success Rate</div>
-                    <div class="metric-value success-rate">{{printf "%.2f"
-                        .ReporterData.GetBestSuccessRate.Metrics.SuccessRate}}%</div>
-                    <div class="detail-label">at {{.ReporterData.GetBestSuccessRate.Concurrency}} concurrency</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-category">Performance Bottleneck</div>
-                    <div class="metric-title">Latency Bottleneck</div>
-                    <div class="metric-value latency">{{printf "%.0f"
-                        .ReporterData.GetLatencyBottleneck.AverageLatency}}ms</div>
-                    <div class="detail-label">at {{.ReporterData.GetLatencyBottleneck.Concurrency}} concurrency</div>
-                </div>
-
             </div>
 
             <!-- Detailed Comparison Table -->

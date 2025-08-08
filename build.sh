@@ -14,9 +14,9 @@ fi
 # Get git tag/description
 GIT_TAG=$(git describe --tags 2>/dev/null || echo "untagged")
 
-# Get the architecture
-ARCH=$(uname -m)
-OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+# Get the architecture and OS, allowing override from environment variables
+ARCH=${ARCH:-$(uname -m)}
+OS=${OS:-$(uname -s | tr '[:upper:]' '[:lower:]')}
 
 # Convert architecture names to common formats
 case $ARCH in

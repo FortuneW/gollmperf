@@ -24,7 +24,7 @@ func (p *QwenProvider) Name() string {
 }
 
 // SendRequest sends a request to Qwen API
-func (p *QwenProvider) SendRequest(priorityParams, anyParam AnyParams, headers map[string]string) (*Response, error) {
+func (p *QwenProvider) SendRequest(priorityParams, anyParam AnyParams, headers map[string]string) (*Response, *Error) {
 	return p.oai.SendRequest(priorityParams, anyParam, headers)
 }
 

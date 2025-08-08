@@ -97,6 +97,16 @@
             margin-bottom: 30px;
         }
 
+        .success-count {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .error-count {
+            color: var(--error-color);
+            font-weight: bold;
+        }
+
         .metric-card {
             background: var(--card-bg);
             border-radius: 10px;
@@ -262,7 +272,7 @@
 
         .error-type {
             font-weight: 500;
-            color: var(--text-primary);
+            color: var(--warning-color);
         }
 
         .error-count {
@@ -475,7 +485,8 @@
                             {{range .ReporterData.TestResults}}
                             <tr>
                                 <td>{{.Concurrency}}</td>
-                                <td>{{.Metrics.SuccessfulRequests}}/{{.Metrics.TotalRequests}}</td>
+                                <td class="{{if gt .Metrics.FailedRequests 0}}error-count{{else}}success-count{{end}}">
+                                    {{.Metrics.SuccessfulRequests}}/{{.Metrics.TotalRequests}}</td>
                                 <td>{{.Metrics.TotalDuration.Milliseconds}}ms</td>
                                 <td>{{printf "%.2f" .Metrics.QPS}}</td>
                                 <td>{{printf "%.1f" .Metrics.TokensPerSecond}}</td>
@@ -504,7 +515,6 @@
                         <thead>
                             <tr>
                                 <th>Concurrency</th>
-                                <th>Failed/Total Requests</th>
                                 <th>Error Rate</th>
                                 <th>Error Type Distribution</th>
                             </tr>
@@ -514,7 +524,6 @@
                             {{if gt .Metrics.FailedRequests 0}}
                             <tr>
                                 <td>{{.Concurrency}}</td>
-                                <td>{{.Metrics.FailedRequests}}/{{.Metrics.TotalRequests}}</td>
                                 <td><span class="error-count">{{printf "%.2f%%" .Metrics.ErrorRate}}</span></td>
                                 <td>
                                     {{if .Metrics.ErrorTypeCounts}}

@@ -72,7 +72,6 @@ type Metrics struct {
 	FirstTokenLatencyP99     Duration `json:"first_token_latency_p99,omitempty"`
 
 	// Error analysis
-	ErrorCounts     map[string]int `json:"error_counts"`
 	ErrorTypeCounts map[string]int `json:"error_type_counts,omitempty"`
 }
 
@@ -94,7 +93,6 @@ func (a *Analyzer) Analyze() *Metrics {
 	successfulResults := a.collector.GetSuccessfulResults()
 
 	metrics := &Metrics{
-		ErrorCounts:     make(map[string]int),
 		ErrorTypeCounts: make(map[string]int),
 	}
 
@@ -187,14 +185,10 @@ func (a *Analyzer) Analyze() *Metrics {
 
 	// Error analysis
 	failedResults := a.collector.GetFailedResults()
-	for _, result := range failedResults {
-		metrics.ErrorCounts[result.ErrorType]++
-	}
-
 	// Error type analysis
 	for _, result := range failedResults {
-		if result.ErrorType != "" {
-			metrics.ErrorTypeCounts[result.ErrorType]++
+		if result.Error.Type != "" {
+			metrics.ErrorTypeCounts[fmt.Sprintf("%d:%s", result.Error.Code, result.Error.Type)]++
 		} else {
 			// Default to "unknown" for results without error type
 			metrics.ErrorTypeCounts["unknown"]++

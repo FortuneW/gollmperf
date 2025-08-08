@@ -13,7 +13,7 @@ type Provider interface {
 	Name() string
 
 	// SendRequest sends a request to the LLM and returns the response
-	SendRequest(priorityParams AnyParams, anyParam AnyParams, headers map[string]string) (*Response, error)
+	SendRequest(priorityParams AnyParams, anyParam AnyParams, headers map[string]string) (*Response, *Error)
 
 	// SupportsStreaming returns whether the provider supports streaming
 	SupportsStreaming() bool

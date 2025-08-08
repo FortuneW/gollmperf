@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"strings"
 	"sync"
 	"time"
 
@@ -24,53 +23,13 @@ type Result struct {
 	Latency           time.Duration      `json:"latency"`
 	FirstTokenLatency time.Duration      `json:"first_token_latency,omitempty"`
 	Success           bool               `json:"success"`
-	Error             string             `json:"error,omitempty"`
-	ErrorType         string             `json:"error_type,omitempty"` // New field for error categorization
+	Error             *provider.Error    `json:"error,omitempty"`
 	StartTime         time.Time          `json:"start_time"`
 	EndTime           time.Time          `json:"end_time"`
 	RefResponse       *provider.Response `json:"-"`
 }
 
 var mlog = qlog.GetRLog("engine")
-
-// categorizeError categorizes errors into network errors or other errors
-func categorizeError(err error) string {
-	// Check for network-related errors
-	if ok, str := isNetworkError(err); ok {
-		return str
-	}
-
-	// Default to other errors
-	return err.Error()
-}
-
-// isNetworkError checks if an error is network-related
-func isNetworkError(err error) (bool, string) {
-	// Check for common network error types
-	// Note: We can't directly import "net" in this file as it's already imported
-	// We'll check the error string for network-related keywords
-	errStr := err.Error()
-
-	// Common network error indicators
-	networkIndicators := []string{
-		"connection refused",
-		"connection reset",
-		"timeout",
-		"dial tcp",
-		"network is unreachable",
-		"no such host",
-		"i/o timeout",
-		"context deadline exceeded",
-	}
-
-	for _, indicator := range networkIndicators {
-		if strings.Contains(strings.ToLower(errStr), indicator) {
-			return true, indicator
-		}
-	}
-
-	return false, ""
-}
 
 // NewEngine creates a new test engine
 func NewEngine(cfg *config.Config, prov provider.Provider) *Engine {
@@ -135,8 +94,7 @@ func (e *Engine) executeRequest(reqCase provider.AnyParams) *Result {
 	resp, err := e.provider.SendRequest(e.config.Model.ParamsTemplate, reqCase, e.config.Model.Headers)
 	if err != nil {
 		// mlog.Warnf("recv api err: %v", err)
-		result.Error = err.Error()
-		result.ErrorType = categorizeError(err)
+		result.Error = err
 		result.Success = false
 		return result
 	}

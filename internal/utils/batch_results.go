@@ -25,7 +25,9 @@ func SaveBatchResultsToJSONL(results []*engine.Result, filePath string) error {
 		if result.Success && result.RefResponse != nil {
 			jsonData = []byte(result.RefResponse.String())
 		} else {
-			jsonData = []byte(result.Error)
+			if result.Error != nil {
+				jsonData = []byte(result.Error.String())
+			}
 		}
 		// Write to file with newline
 		if _, err := file.Write(append(jsonData, '\n')); err != nil {

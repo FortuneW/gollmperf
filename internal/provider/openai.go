@@ -82,7 +82,7 @@ func (p *OpenAIProvider) mergeRequest(priorityParams, anyParam AnyParams) (data 
 }
 
 // SendRequest sends a request to OpenAI API
-func (p *OpenAIProvider) SendRequest(priorityParams, anyParam AnyParams, headers map[string]string) (resp *Response, err error) {
+func (p *OpenAIProvider) SendRequest(priorityParams, anyParam AnyParams, headers map[string]string) (*Response, *Error) {
 	// Cook request body
 	data, isStream := p.mergeRequest(priorityParams, anyParam)
 
@@ -94,7 +94,7 @@ func (p *OpenAIProvider) SendRequest(priorityParams, anyParam AnyParams, headers
 	// Create HTTP request
 	httpReq, err := http.NewRequest("POST", p.endpoint, bytes.NewBuffer(data))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %w", err)
+		return nil, NewError(0, fmt.Errorf("failed to create request: %w", err))
 	}
 
 	// Set headers
@@ -110,15 +110,17 @@ func (p *OpenAIProvider) SendRequest(priorityParams, anyParam AnyParams, headers
 	// Execute request
 	respHttp, err := p.client.Do(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("request failed: %w", err)
+		return nil, NewError(0, fmt.Errorf("request failed: %w", err))
 	}
 	defer respHttp.Body.Close()
 
 	// Check status code
 	if respHttp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(respHttp.Body)
-		return nil, fmt.Errorf("code %d: %s", respHttp.StatusCode, string(body))
+		return nil, NewError(respHttp.StatusCode, fmt.Errorf("%s", string(body)))
 	}
+
+	var resp *Response
 
 	defer func() {
 		// debug response body
@@ -129,10 +131,15 @@ func (p *OpenAIProvider) SendRequest(priorityParams, anyParam AnyParams, headers
 
 	if isStream {
 		resp, err = p.handleStreamingResponse(respHttp, startTime)
-		return
+
 	} else {
 		resp, err = p.handleNoStreamResponse(respHttp, startTime)
-		return
+	}
+
+	if err == nil {
+		return resp, nil
+	} else {
+		return resp, NewError(503, err)
 	}
 }
 

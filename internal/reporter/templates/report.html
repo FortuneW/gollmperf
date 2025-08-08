@@ -162,6 +162,18 @@
             font-weight: bold;
         }
 
+        .bottleneck-tokens {
+            background-color: var(--info-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        .bottleneck-latency {
+            background-color: var(--warning-color);
+            color: white;
+            font-weight: bold;
+        }
+
         .metric-value.latency {
             color: var(--warning-color);
         }
@@ -457,6 +469,14 @@
                     <div class="detail-label">at {{.ReporterData.GetBestSuccessRate.Concurrency}} concurrency</div>
                 </div>
 
+                <div class="metric-card">
+                    <div class="metric-category">Performance Bottleneck</div>
+                    <div class="metric-title">Latency Bottleneck</div>
+                    <div class="metric-value latency">{{printf "%.0f"
+                        .ReporterData.GetLatencyBottleneck.AverageLatency}}ms</div>
+                    <div class="detail-label">at {{.ReporterData.GetLatencyBottleneck.Concurrency}} concurrency</div>
+                </div>
+
             </div>
 
             <!-- Detailed Comparison Table -->
@@ -489,6 +509,9 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {{$bestQPS := .ReporterData.GetBestQPS}}
+                            {{$bestTokens := .ReporterData.GetBestTokensThroughput}}
+                            {{$latencyBottleneck := .ReporterData.GetLatencyBottleneck}}
                             {{range .ReporterData.TestResults}}
                             <tr>
                                 <td>{{.Concurrency}}</td>
@@ -496,10 +519,14 @@
                                     {{.Metrics.SuccessfulRequests}}/{{.Metrics.TotalRequests}}</td>
                                 <td>{{.Metrics.TotalDuration.Milliseconds}}ms</td>
                                 <td
-                                    class="{{if eq .Concurrency $.ReporterData.GetBestQPS.Concurrency}}bottleneck-qps{{end}}">
+                                    class="{{if eq .Concurrency $bestQPS.Concurrency}}bottleneck-qps{{end}}">
                                     {{printf "%.2f" .Metrics.QPS}}</td>
-                                <td>{{printf "%.1f" .Metrics.TokensPerSecond}}</td>
-                                <td>{{.Metrics.AverageLatency.Milliseconds}}</td>
+                                <td
+                                    class="{{if eq .Concurrency $bestTokens.Concurrency}}bottleneck-tokens{{end}}">
+                                    {{printf "%.1f" .Metrics.TokensPerSecond}}</td>
+                                <td
+                                    class="{{if eq .Concurrency $latencyBottleneck.Concurrency}}bottleneck-latency{{end}}">
+                                    {{.Metrics.AverageLatency.Milliseconds}}</td>
                                 <td>{{.Metrics.LatencyP50.Milliseconds}}</td>
                                 <td>{{.Metrics.LatencyP90.Milliseconds}}</td>
                                 <td>{{.Metrics.LatencyP99.Milliseconds}}</td>

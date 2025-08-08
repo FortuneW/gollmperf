@@ -18,6 +18,12 @@ type BottleneckResult struct {
 	// QPS is the QPS value at bottleneck
 	QPS float64
 
+	// TokensPerSec is the Tokens/Sec value at bottleneck
+	TokensPerSec float64
+
+	// AverageLatency is the average latency at bottleneck
+	AverageLatency float64
+
 	// IsBottleneck indicates whether a bottleneck was detected
 	IsBottleneck bool
 
@@ -50,6 +56,8 @@ func (g *GradientBasedDetector) DetectBottleneck(results []ConcurrentTestResult)
 		return &BottleneckResult{
 			Concurrency:   results[0].Concurrency,
 			QPS:           float64(results[0].Metrics.QPS),
+			TokensPerSec:  float64(results[0].Metrics.TokensPerSecond),
+			AverageLatency: float64(results[0].Metrics.AverageLatency),
 			IsBottleneck:  false,
 			AlgorithmUsed: "GradientBased",
 		}
@@ -95,6 +103,8 @@ func (g *GradientBasedDetector) DetectBottleneck(results []ConcurrentTestResult)
 			return &BottleneckResult{
 				Concurrency:   prev.Concurrency,
 				QPS:           prevQPS,
+				TokensPerSec:  float64(prev.Metrics.TokensPerSecond),
+				AverageLatency: float64(prev.Metrics.AverageLatency),
 				IsBottleneck:  true,
 				AlgorithmUsed: "GradientBased",
 			}
@@ -106,6 +116,8 @@ func (g *GradientBasedDetector) DetectBottleneck(results []ConcurrentTestResult)
 	return &BottleneckResult{
 		Concurrency:   lastResult.Concurrency,
 		QPS:           float64(lastResult.Metrics.QPS),
+		TokensPerSec:  float64(lastResult.Metrics.TokensPerSecond),
+		AverageLatency: float64(lastResult.Metrics.AverageLatency),
 		IsBottleneck:  false,
 		AlgorithmUsed: "GradientBased",
 	}
@@ -120,11 +132,24 @@ type StatisticalBasedDetector struct {
 	Threshold float64
 }
 
+// LatencyBasedDetector implements bottleneck detection using latency ratio method
+type LatencyBasedDetector struct {
+	// Threshold is the minimum latency growth rate to concurrency growth rate ratio to consider as bottleneck
+	Threshold float64
+}
+
 // NewStatisticalBasedDetector creates a new statistical-based bottleneck detector
 func NewStatisticalBasedDetector(windowSize int, threshold float64) *StatisticalBasedDetector {
 	return &StatisticalBasedDetector{
 		WindowSize: windowSize,
 		Threshold:  threshold,
+	}
+}
+
+// NewLatencyBasedDetector creates a new latency-based bottleneck detector
+func NewLatencyBasedDetector(threshold float64) *LatencyBasedDetector {
+	return &LatencyBasedDetector{
+		Threshold: threshold,
 	}
 }
 
@@ -188,6 +213,8 @@ func (s *StatisticalBasedDetector) DetectBottleneck(results []ConcurrentTestResu
 			return &BottleneckResult{
 				Concurrency:   sortedResults[i-s.WindowSize].Concurrency,
 				QPS:           float64(sortedResults[i-s.WindowSize].Metrics.QPS),
+				TokensPerSec:  float64(sortedResults[i-s.WindowSize].Metrics.TokensPerSecond),
+				AverageLatency: float64(sortedResults[i-s.WindowSize].Metrics.AverageLatency),
 				IsBottleneck:  true,
 				AlgorithmUsed: "StatisticalBased",
 			}
@@ -199,8 +226,96 @@ func (s *StatisticalBasedDetector) DetectBottleneck(results []ConcurrentTestResu
 	return &BottleneckResult{
 		Concurrency:   lastResult.Concurrency,
 		QPS:           float64(lastResult.Metrics.QPS),
+		TokensPerSec:  float64(lastResult.Metrics.TokensPerSecond),
+		AverageLatency: float64(lastResult.Metrics.AverageLatency),
 		IsBottleneck:  false,
 		AlgorithmUsed: "StatisticalBased",
+	}
+}
+
+// DetectBottleneck finds the concurrency level at which latency bottleneck occurs using ratio method
+func (l *LatencyBasedDetector) DetectBottleneck(results []ConcurrentTestResult) *BottleneckResult {
+	if len(results) == 0 {
+		return &BottleneckResult{
+			IsBottleneck:  false,
+			AlgorithmUsed: "LatencyBased",
+		}
+	} else if len(results) == 1 {
+		return &BottleneckResult{
+			Concurrency:   results[0].Concurrency,
+			QPS:           float64(results[0].Metrics.QPS),
+			TokensPerSec:  float64(results[0].Metrics.TokensPerSecond),
+			AverageLatency: float64(results[0].Metrics.AverageLatency),
+			IsBottleneck:  false,
+			AlgorithmUsed: "LatencyBased",
+		}
+	}
+
+	// Sort results by concurrency level
+	sortedResults := make([]ConcurrentTestResult, len(results))
+	copy(sortedResults, results)
+
+	// Simple bubble sort by concurrency
+	for i := 0; i < len(sortedResults)-1; i++ {
+		for j := 0; j < len(sortedResults)-i-1; j++ {
+			if sortedResults[j].Concurrency > sortedResults[j+1].Concurrency {
+				sortedResults[j], sortedResults[j+1] = sortedResults[j+1], sortedResults[j]
+			}
+		}
+	}
+
+	// Find the point where latency growth rate exceeds concurrency growth rate by threshold
+	for i := 1; i < len(sortedResults); i++ {
+		prev := sortedResults[i-1]
+		curr := sortedResults[i]
+
+		// Skip if either result has no successful requests
+		if prev.Metrics.SuccessfulRequests == 0 || curr.Metrics.SuccessfulRequests == 0 {
+			continue
+		}
+
+		// Skip if either result has zero average latency
+		if prev.Metrics.AverageLatency == 0 || curr.Metrics.AverageLatency == 0 {
+			continue
+		}
+
+		// Calculate concurrency growth rate
+		concurrencyDiff := float64(curr.Concurrency - prev.Concurrency)
+		if concurrencyDiff == 0 {
+			continue
+		}
+
+		// Calculate latency growth rate
+		prevLatency := float64(prev.Metrics.AverageLatency)
+		currLatency := float64(curr.Metrics.AverageLatency)
+		latencyDiff := currLatency - prevLatency
+
+		// Calculate growth rate ratio (latency growth rate / concurrency growth rate)
+		// We want to detect when latency grows faster than concurrency
+		ratio := (latencyDiff / prevLatency) / (concurrencyDiff / float64(prev.Concurrency))
+
+		// If ratio is above threshold, we've found the bottleneck
+		if ratio > l.Threshold {
+			return &BottleneckResult{
+				Concurrency:   prev.Concurrency,
+				QPS:           float64(prev.Metrics.QPS),
+				TokensPerSec:  float64(prev.Metrics.TokensPerSecond),
+				AverageLatency: float64(prev.Metrics.AverageLatency),
+				IsBottleneck:  true,
+				AlgorithmUsed: "LatencyBased",
+			}
+		}
+	}
+
+	// If no bottleneck found, return the last result
+	lastResult := sortedResults[len(sortedResults)-1]
+	return &BottleneckResult{
+		Concurrency:   lastResult.Concurrency,
+		QPS:           float64(lastResult.Metrics.QPS),
+		TokensPerSec:  float64(lastResult.Metrics.TokensPerSecond),
+		AverageLatency: float64(lastResult.Metrics.AverageLatency),
+		IsBottleneck:  false,
+		AlgorithmUsed: "LatencyBased",
 	}
 }
 

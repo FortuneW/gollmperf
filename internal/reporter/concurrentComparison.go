@@ -110,3 +110,14 @@ func (c *ConcurrentComparison) GetBestTokensThroughput() *ConcurrentTestResult {
 func (c *ConcurrentComparison) GetQPSBottleneck() *BottleneckResult {
 	return c.DetectQPSBottleneck()
 }
+
+// DetectLatencyBottleneck is a convenience function that uses default latency-based detection
+func (c *ConcurrentComparison) DetectLatencyBottleneck() *BottleneckResult {
+	detector := NewLatencyBasedDetector(1.0) // 1.0 threshold for ratio-based detection
+	return detector.DetectBottleneck(c.TestResults)
+}
+
+// GetLatencyBottleneck returns the concurrency level at which latency bottleneck occurs
+func (c *ConcurrentComparison) GetLatencyBottleneck() *BottleneckResult {
+	return c.DetectLatencyBottleneck()
+}

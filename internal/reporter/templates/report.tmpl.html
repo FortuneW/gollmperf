@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>goLLMPerf Performance Report</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        {{.ReportTmplCSS}}
+
+        {{.ChartTmplCSS}}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>goLLMPerf Performance Report</h1>
+        </header>
+
+        <!-- Concurrent Test Comparison Display -->
+        <div class="test-group">
+            <div class="test-header">
+                <h2 class="test-title">Concurrent Test Comparison</h2>
+            </div>
+
+            <!-- Key Comparison Metrics -->
+            <div class="metrics-dashboard">
+
+                <div class="metric-card">
+                    <div class="metric-category">Best Performance</div>
+                    <div class="metric-title">Highest QPS</div>
+                    <div class="metric-value qps">{{if .ReporterData.GetBestQPS}}{{printf "%.2f"
+                        .ReporterData.GetBestQPS.Metrics.QPS}}{{else}}N/A{{end}}</div>
+                    <div class="detail-label">{{if .ReporterData.GetBestQPS}}at {{.ReporterData.GetBestQPS.Concurrency}}
+                        concurrency{{else}}No data available{{end}}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-category">Best Throughput</div>
+                    <div class="metric-title">Highest Tokens per Second</div>
+                    <div class="metric-value qps">{{if .ReporterData.GetBestTokensThroughput}}{{printf "%.1f"
+                        .ReporterData.GetBestTokensThroughput.Metrics.TokensPerSecond}}{{else}}N/A{{end}}</div>
+                    <div class="detail-label">{{if .ReporterData.GetBestTokensThroughput}}at
+                        {{.ReporterData.GetBestTokensThroughput.Concurrency}} concurrency{{else}}No data
+                        available{{end}}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-category">E2E Latency Bottleneck</div>
+                    <div class="metric-title">Bottleneck Detected</div>
+                    <div class="metric-value latency">
+                        {{if
+                        .ReporterData.GetLatencyBottleneck}}{{.ReporterData.GetLatencyBottleneck.AverageLatencyMS}}{{else}}N/A{{end}}
+                        ms</div>
+                    <div class="detail-label">{{if .ReporterData.GetLatencyBottleneck}}at
+                        {{.ReporterData.GetLatencyBottleneck.Concurrency}} concurrency{{else}}No data available{{end}}
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-category">Recommended</div>
+                    <div class="metric-title">Optimal Concurrency</div>
+                    <div class="metric-value" style="color: var(--primary-color); font-weight: 700;">
+                        {{.ReporterData.GetRecommendedConcurrency.Concurrency}}</div>
+                    <div class="detail-label">{{.ReporterData.GetRecommendedConcurrency.Reason}}</div>
+                </div>
+
+            </div>
+
+            <!-- Detailed Comparison Table -->
+            <div class="section">
+                <h3 class="section-title">Detailed Comparison</h3>
+                <div class="comparison-table-container">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Concurrency</th>
+                                <th rowspan="2">Requests</th>
+                                <th rowspan="2">Duration</th>
+                                <th rowspan="2">QPS</th>
+                                <th rowspan="2">Tokens/sec</th>
+                                <th class="group-header" colspan="4">E2E Latency</th>
+                                <th class="group-header" colspan="4">First Token Latency</th>
+                                <th class="group-header" colspan="2">Token Metrics</th>
+                            </tr>
+                            <tr>
+                                <th>Average</th>
+                                <th>P50</th>
+                                <th>P90</th>
+                                <th>P99</th>
+                                <th>Average</th>
+                                <th>P50</th>
+                                <th>P90</th>
+                                <th>P99</th>
+                                <th>Request</th>
+                                <th>Response</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{$bestQPS := .ReporterData.GetBestQPS}}
+                            {{$bestTokens := .ReporterData.GetBestTokensThroughput}}
+                            {{$latencyBottleneck := .ReporterData.GetLatencyBottleneck}}
+                            {{$firstTokenLatencyBottleneck := .ReporterData.GetFirstTokenLatencyBottleneck}}
+                            {{range .ReporterData.TestResults}}
+                            <tr>
+                                <td>{{.Concurrency}}</td>
+                                <td class="{{if gt .Metrics.FailedRequests 0}}error-count{{else}}success-count{{end}}">
+                                    {{.Metrics.SuccessfulRequests}}/{{.Metrics.TotalRequests}}</td>
+                                <td>{{.Metrics.TotalDuration.Milliseconds}}ms</td>
+                                <td class="{{if eq .Concurrency $bestQPS.Concurrency}}bottleneck-qps{{end}}">
+                                    {{printf "%.2f" .Metrics.QPS}}</td>
+                                <td class="{{if eq .Concurrency $bestTokens.Concurrency}}bottleneck-tokens{{end}}">
+                                    {{printf "%.1f" .Metrics.TokensPerSecond}}</td>
+                                <td
+                                    class="{{if eq .Concurrency $latencyBottleneck.Concurrency}}bottleneck-latency{{end}}">
+                                    {{.Metrics.AverageLatency.Milliseconds}}</td>
+                                <td>{{.Metrics.LatencyP50.Milliseconds}}</td>
+                                <td>{{.Metrics.LatencyP90.Milliseconds}}</td>
+                                <td>{{.Metrics.LatencyP99.Milliseconds}}</td>
+                                <td
+                                    class="{{if eq .Concurrency $firstTokenLatencyBottleneck.Concurrency}}bottleneck-latency{{end}}">
+                                    {{.Metrics.AverageFirstTokenLatency.Milliseconds}}</td>
+                                <td>{{.Metrics.FirstTokenLatencyP50.Milliseconds}}</td>
+                                <td>{{.Metrics.FirstTokenLatencyP90.Milliseconds}}</td>
+                                <td>{{.Metrics.FirstTokenLatencyP99.Milliseconds}}</td>
+                                <td>{{printf "%.1f" .Metrics.AverageRequestTokens}}</td>
+                                <td>{{printf "%.1f" .Metrics.AverageResponseTokens}}</td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- QPS and Tokens/sec Chart -->
+            <div class="section">
+                <h3 class="section-title">Performance Metrics Chart</h3>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Error Statistics Table -->
+            <div class="section">
+                <h3 class="section-title">Error Statistics</h3>
+                <div class="comparison-table-container">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Concurrency</th>
+                                <th>Error Rate</th>
+                                <th>Error Type Distribution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .ReporterData.TestResults}}
+                            {{if gt .Metrics.FailedRequests 0}}
+                            <tr>
+                                <td>{{.Concurrency}}</td>
+                                <td>
+                                    <span class="error-count">{{printf "%.2f%%" .Metrics.ErrorRate}}</span>
+                                </td>
+                                <td>
+                                    <div class="error-distribution">
+                                        {{range $errorType, $count := .Metrics.ErrorTypeCounts}}
+                                        <div class="error-item">
+                                            <span class="error-type">{{$errorType}}:</span>
+                                            <span class="error-count">{{$count}}</span>
+                                        </div>
+                                        {{end}}
+                                    </div>
+                                </td>
+                            </tr>
+                            {{end}}
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Generated by <a href="https://github.com/FortuneW/gollmperf">goLLMPerf</a> - LLM Performance Testing Tool
+        </div>
+    </div>
+
+    <script>
+        {{.ChartTmplJS}}
+    </script>
+</body>
+
+</html>

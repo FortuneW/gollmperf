@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"bytes"
 
 	"github.com/FortuneW/gollmperf/internal/analyzer"
 	"github.com/FortuneW/qlog"
@@ -17,7 +18,10 @@ var mlog = qlog.GetRLog("reporter")
 
 // ReporterData is a wrapper struct for template data
 type ReporterData struct {
-	ReporterData *ConcurrentComparison `json:"reporter_data,omitempty"`
+	ReporterData  *ConcurrentComparison `json:"reporter_data,omitempty"`
+	ReportTmplCSS string                `json:"-"`
+	ChartTmplCSS  string                `json:"-"`
+	ChartTmplJS   string                `json:"-"`
 }
 
 // Reporter generates reports from analysis results
@@ -145,13 +149,19 @@ func (r *Reporter) GenerateCSVReport(filename string) error {
 	return nil
 }
 
-//go:embed templates/report.html
+//go:embed templates/*
 var templateFS embed.FS
 
 // GenerateHTMLReport generates an HTML report
 func (r *Reporter) GenerateHTMLReport(filename string) error {
+	// Create output directory if it doesn't exist
+	outputDir := filepath.Dir(filename)
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		return fmt.Errorf("failed to create output directory: %w", err)
+	}
+
 	// Read the template file from embedded filesystem
-	templateData, err := templateFS.ReadFile("templates/report.html")
+	templateData, err := templateFS.ReadFile("templates/report.tmpl.html")
 	if err != nil {
 		return fmt.Errorf("failed to read template file from embedded filesystem: %w", err)
 	}
@@ -167,10 +177,32 @@ func (r *Reporter) GenerateHTMLReport(filename string) error {
 	}
 	defer file.Close()
 
+	jsFileContent, _ := templateFS.ReadFile("templates/js/chart.tmpl.js")
+	chartTmplCSS, _ := templateFS.ReadFile("templates/css/chart.tmpl.css")
+	reportTmplCSS, _ := templateFS.ReadFile("templates/css/report.tmpl.css")
+
 	// Create wrapper data for template
 	data := &ReporterData{
-		ReporterData: r.concurrentComparison,
+		ReporterData:  r.concurrentComparison,
+		ChartTmplCSS:  string(chartTmplCSS),
+		ReportTmplCSS: string(reportTmplCSS),
+		ChartTmplJS:   string(jsFileContent),
 	}
+	
+	// Process JavaScript template with Go template engine
+	jsTmpl, err := template.New("chart.js").Parse(data.ChartTmplJS)
+	if err != nil {
+		return fmt.Errorf("failed to parse JavaScript template: %w", err)
+	}
+	
+	// Execute JavaScript template
+	var jsBuffer bytes.Buffer
+	if err := jsTmpl.Execute(&jsBuffer, data); err != nil {
+		return fmt.Errorf("failed to execute JavaScript template: %w", err)
+	}
+	
+	// Update the ChartTmplJS field with processed JavaScript
+	data.ChartTmplJS = jsBuffer.String()
 
 	// Execute template with wrapper data
 	if err := tmpl.Execute(file, data); err != nil {

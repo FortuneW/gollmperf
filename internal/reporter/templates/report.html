@@ -51,12 +51,6 @@
             font-weight: 700;
         }
 
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-top: 10px;
-        }
-
         .test-group {
             background: var(--card-bg);
             border-radius: 12px;
@@ -80,14 +74,6 @@
             font-weight: 600;
             color: var(--text-primary);
             margin: 0;
-        }
-
-        .test-config {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            background: var(--light-bg);
-            padding: 8px 15px;
-            border-radius: 20px;
         }
 
         .metrics-dashboard {
@@ -144,14 +130,6 @@
             margin: 0;
         }
 
-        .metric-value.success-rate {
-            color: var(--success-color);
-        }
-
-        .metric-value.error-rate {
-            color: var(--error-color);
-        }
-
         .metric-value.qps {
             color: var(--info-color);
         }
@@ -196,69 +174,7 @@
             border-bottom: 2px solid var(--border-color);
         }
 
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .detail-card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px var(--shadow);
-            border: 1px solid var(--border-color);
-        }
-
-        .detail-title {
-            font-size: 1.2rem;
-            color: var(--text-primary);
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .detail-item:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-
-        .detail-label {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .detail-value {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .detail-value.success {
-            color: var(--success-color);
-        }
-
-        .detail-value.error {
-            color: var(--error-color);
-        }
-
-        .detail-value.warning {
-            color: var(--warning-color);
-        }
-
-        .detail-value.info {
-            color: var(--info-color);
-        }
-
-
+        /* Comparison Table Styles */
         .comparison-table {
             width: 100%;
             border-collapse: collapse;
@@ -271,6 +187,40 @@
             text-align: center;
             border: 1px solid var(--border-color);
             white-space: nowrap;
+        }
+
+        .comparison-table th {
+            font-weight: 600;
+        }
+
+        .comparison-table th[rowspan] {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .comparison-table th:not([rowspan]) {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .comparison-table th[colspan] {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .group-header {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+
+        .comparison-table-container {
+            overflow-x: auto;
         }
 
         /* Error Statistics Styles */
@@ -296,71 +246,6 @@
         .error-count {
             color: var(--error-color);
             font-weight: 600;
-        }
-
-        .no-errors {
-            color: var(--success-color);
-            font-style: italic;
-        }
-
-        .comparison-table th[colspan] {
-            background-color: var(--light-bg);
-            font-weight: 600;
-        }
-
-        .comparison-table-container {
-            overflow-x: auto;
-        }
-
-        .comparison-table th {
-            font-weight: 600;
-        }
-
-        .comparison-table th[rowspan] {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .comparison-table th:not([rowspan]) {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        .comparison-table tr:nth-child(even) {
-            background-color: var(--light-bg);
-        }
-
-        .merged-card {
-            text-align: center;
-        }
-
-        .merged-metrics {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .merged-metric {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-        }
-
-        .merged-label {
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        .merged-value {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .detail-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-top: 5px;
         }
 
         .footer {
@@ -432,34 +317,35 @@
                 <div class="metric-card">
                     <div class="metric-category">Best Performance</div>
                     <div class="metric-title">Highest QPS</div>
-                    <div class="metric-value qps">{{printf "%.2f" .ReporterData.GetBestQPS.Metrics.QPS}}</div>
-                    <div class="detail-label">at {{.ReporterData.GetBestQPS.Concurrency}} concurrency</div>
+                    <div class="metric-value qps">{{if .ReporterData.GetBestQPS}}{{printf "%.2f" .ReporterData.GetBestQPS.Metrics.QPS}}{{else}}N/A{{end}}</div>
+                    <div class="detail-label">{{if .ReporterData.GetBestQPS}}at {{.ReporterData.GetBestQPS.Concurrency}} concurrency{{else}}No data available{{end}}</div>
                 </div>
 
                 <div class="metric-card">
                     <div class="metric-category">Best Throughput</div>
                     <div class="metric-title">Highest Tokens per Second</div>
-                    <div class="metric-value qps">{{printf "%.1f"
-                        .ReporterData.GetBestTokensThroughput.Metrics.TokensPerSecond}}</div>
-                    <div class="detail-label">at {{.ReporterData.GetBestTokensThroughput.Concurrency}} concurrency</div>
+                    <div class="metric-value qps">{{if .ReporterData.GetBestTokensThroughput}}{{printf "%.1f"
+                        .ReporterData.GetBestTokensThroughput.Metrics.TokensPerSecond}}{{else}}N/A{{end}}</div>
+                    <div class="detail-label">{{if .ReporterData.GetBestTokensThroughput}}at {{.ReporterData.GetBestTokensThroughput.Concurrency}} concurrency{{else}}No data available{{end}}</div>
                 </div>
 
                 <div class="metric-card">
-                    <div class="metric-category">Best Response</div>
-                    <div class="metric-title">Lowest Latency</div>
+                    <div class="metric-category">E2E Latency Bottleneck</div>
+                    <div class="metric-title">Bottleneck Detected</div>
                     <div class="metric-value latency">
-                        {{.ReporterData.GetBestLatency.Metrics.AverageLatency.Milliseconds}}</div>
-                    <div class="detail-label">at {{.ReporterData.GetBestLatency.Concurrency}} concurrency</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-category">Best TTFT</div>
-                    <div class="metric-title">Lowest Time to First Token</div>
-                    <div class="metric-value latency">
-                        {{.ReporterData.GetBestFirstTokenLatency.Metrics.AverageFirstTokenLatency.Milliseconds}}</div>
-                    <div class="detail-label">at {{.ReporterData.GetBestFirstTokenLatency.Concurrency}} concurrency
+                        {{if .ReporterData.GetLatencyBottleneck}}{{.ReporterData.GetLatencyBottleneck.AverageLatencyMS}}{{else}}N/A{{end}} ms</div>
+                    <div class="detail-label">{{if .ReporterData.GetLatencyBottleneck}}at {{.ReporterData.GetLatencyBottleneck.Concurrency}} concurrency{{else}}No data available{{end}}
                     </div>
                 </div>
+
+                <div class="metric-card">
+                    <div class="metric-category">Recommended</div>
+                    <div class="metric-title">Optimal Concurrency</div>
+                    <div class="metric-value" style="color: var(--primary-color); font-weight: 700;">
+                        {{.ReporterData.GetRecommendedConcurrency.Concurrency}}</div>
+                    <div class="detail-label">{{.ReporterData.GetRecommendedConcurrency.Reason}}</div>
+                </div>
+
             </div>
 
             <!-- Detailed Comparison Table -->
@@ -474,38 +360,37 @@
                                 <th rowspan="2">Duration</th>
                                 <th rowspan="2">QPS</th>
                                 <th rowspan="2">Tokens/sec</th>
-                                <th colspan="4">E2E Latency</th>
-                                <th colspan="2">Token Metrics</th>
-                                <th colspan="4">First Token Latency</th>
+                                <th class="group-header" colspan="4">E2E Latency</th>
+                                <th class="group-header" colspan="4">First Token Latency</th>
+                                <th class="group-header" colspan="2">Token Metrics</th>
                             </tr>
                             <tr>
+                                <th>Average</th>
+                                <th>P50</th>
+                                <th>P90</th>
+                                <th>P99</th>
                                 <th>Average</th>
                                 <th>P50</th>
                                 <th>P90</th>
                                 <th>P99</th>
                                 <th>Request</th>
                                 <th>Response</th>
-                                <th>Average</th>
-                                <th>P50</th>
-                                <th>P90</th>
-                                <th>P99</th>
                             </tr>
                         </thead>
                         <tbody>
                             {{$bestQPS := .ReporterData.GetBestQPS}}
                             {{$bestTokens := .ReporterData.GetBestTokensThroughput}}
                             {{$latencyBottleneck := .ReporterData.GetLatencyBottleneck}}
+                            {{$firstTokenLatencyBottleneck := .ReporterData.GetFirstTokenLatencyBottleneck}}
                             {{range .ReporterData.TestResults}}
                             <tr>
                                 <td>{{.Concurrency}}</td>
                                 <td class="{{if gt .Metrics.FailedRequests 0}}error-count{{else}}success-count{{end}}">
                                     {{.Metrics.SuccessfulRequests}}/{{.Metrics.TotalRequests}}</td>
                                 <td>{{.Metrics.TotalDuration.Milliseconds}}ms</td>
-                                <td
-                                    class="{{if eq .Concurrency $bestQPS.Concurrency}}bottleneck-qps{{end}}">
+                                <td class="{{if eq .Concurrency $bestQPS.Concurrency}}bottleneck-qps{{end}}">
                                     {{printf "%.2f" .Metrics.QPS}}</td>
-                                <td
-                                    class="{{if eq .Concurrency $bestTokens.Concurrency}}bottleneck-tokens{{end}}">
+                                <td class="{{if eq .Concurrency $bestTokens.Concurrency}}bottleneck-tokens{{end}}">
                                     {{printf "%.1f" .Metrics.TokensPerSecond}}</td>
                                 <td
                                     class="{{if eq .Concurrency $latencyBottleneck.Concurrency}}bottleneck-latency{{end}}">
@@ -513,12 +398,14 @@
                                 <td>{{.Metrics.LatencyP50.Milliseconds}}</td>
                                 <td>{{.Metrics.LatencyP90.Milliseconds}}</td>
                                 <td>{{.Metrics.LatencyP99.Milliseconds}}</td>
-                                <td>{{printf "%.1f" .Metrics.AverageRequestTokens}}</td>
-                                <td>{{printf "%.1f" .Metrics.AverageResponseTokens}}</td>
-                                <td>{{.Metrics.AverageFirstTokenLatency.Milliseconds}}</td>
+                                <td
+                                    class="{{if eq .Concurrency $firstTokenLatencyBottleneck.Concurrency}}bottleneck-latency{{end}}">
+                                    {{.Metrics.AverageFirstTokenLatency.Milliseconds}}</td>
                                 <td>{{.Metrics.FirstTokenLatencyP50.Milliseconds}}</td>
                                 <td>{{.Metrics.FirstTokenLatencyP90.Milliseconds}}</td>
                                 <td>{{.Metrics.FirstTokenLatencyP99.Milliseconds}}</td>
+                                <td>{{printf "%.1f" .Metrics.AverageRequestTokens}}</td>
+                                <td>{{printf "%.1f" .Metrics.AverageResponseTokens}}</td>
                             </tr>
                             {{end}}
                         </tbody>
@@ -543,9 +430,10 @@
                             {{if gt .Metrics.FailedRequests 0}}
                             <tr>
                                 <td>{{.Concurrency}}</td>
-                                <td><span class="error-count">{{printf "%.2f%%" .Metrics.ErrorRate}}</span></td>
                                 <td>
-                                    {{if .Metrics.ErrorTypeCounts}}
+                                    <span class="error-count">{{printf "%.2f%%" .Metrics.ErrorRate}}</span>
+                                </td>
+                                <td>
                                     <div class="error-distribution">
                                         {{range $errorType, $count := .Metrics.ErrorTypeCounts}}
                                         <div class="error-item">
@@ -554,9 +442,6 @@
                                         </div>
                                         {{end}}
                                     </div>
-                                    {{else}}
-                                    <span class="no-errors">No errors</span>
-                                    {{end}}
                                 </td>
                             </tr>
                             {{end}}

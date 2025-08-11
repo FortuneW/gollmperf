@@ -1,14 +1,11 @@
 package reporter
 
 import (
-	"bytes"
-	"embed"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
-	"text/template"
 
 	"github.com/FortuneW/gollmperf/internal/analyzer"
 	"github.com/FortuneW/qlog"
@@ -98,118 +95,6 @@ func (r *Reporter) GenerateJSONReport(filename string) error {
 
 	if err := encoder.Encode(r.concurrentComparison); err != nil {
 		return fmt.Errorf("failed to encode JSON: %w", err)
-	}
-
-	return nil
-}
-
-// GenerateCSVReport generates a CSV report
-func (r *Reporter) GenerateCSVReport(filename string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return fmt.Errorf("failed to create file: %w", err)
-	}
-	defer file.Close()
-
-	// Write CSV header
-	header := "concurrency,total_requests,successful_requests,failed_requests,success_rate,qps,tokens_per_second," +
-		"average_latency,latency_p50,latency_p90,latency_p99," +
-		"average_request_tokens,average_response_tokens," +
-		"average_first_token_latency,first_token_latency_p50,first_token_latency_p90,first_token_latency_p99\n"
-
-	if _, err := file.WriteString(header); err != nil {
-		return fmt.Errorf("failed to write header: %w", err)
-	}
-
-	for _, result := range r.concurrentComparison.TestResults {
-		// Write data row
-		row := fmt.Sprintf("%d,%d,%d,%d,%.2f,%.2f,%.2f,%d,%d,%d,%d,%.2f,%.2f,%d,%d,%d,%d\n",
-			result.Concurrency,
-			result.Metrics.TotalRequests,
-			result.Metrics.SuccessfulRequests,
-			result.Metrics.FailedRequests,
-			result.Metrics.SuccessRate,
-			result.Metrics.QPS,
-			result.Metrics.TokensPerSecond,
-			result.Metrics.AverageLatency.Milliseconds(),
-			result.Metrics.LatencyP50.Milliseconds(),
-			result.Metrics.LatencyP90.Milliseconds(),
-			result.Metrics.LatencyP99.Milliseconds(),
-			result.Metrics.AverageRequestTokens,
-			result.Metrics.AverageResponseTokens,
-			result.Metrics.AverageFirstTokenLatency.Milliseconds(),
-			result.Metrics.FirstTokenLatencyP50.Milliseconds(),
-			result.Metrics.FirstTokenLatencyP90.Milliseconds(),
-			result.Metrics.FirstTokenLatencyP99.Milliseconds(),
-		)
-
-		if _, err := file.WriteString(row); err != nil {
-			return fmt.Errorf("failed to write data: %w", err)
-		}
-	}
-	return nil
-}
-
-//go:embed templates/*
-var templateFS embed.FS
-
-// GenerateHTMLReport generates an HTML report
-func (r *Reporter) GenerateHTMLReport(filename string) error {
-	// Create output directory if it doesn't exist
-	outputDir := filepath.Dir(filename)
-	if err := os.MkdirAll(outputDir, 0755); err != nil {
-		return fmt.Errorf("failed to create output directory: %w", err)
-	}
-
-	// Read the template file from embedded filesystem
-	templateData, err := templateFS.ReadFile("templates/report.tmpl.html")
-	if err != nil {
-		return fmt.Errorf("failed to read template file from embedded filesystem: %w", err)
-	}
-
-	tmpl, err := template.New("report").Parse(string(templateData))
-	if err != nil {
-		return fmt.Errorf("failed to parse template: %w", err)
-	}
-
-	file, err := os.Create(filename)
-	if err != nil {
-		return fmt.Errorf("failed to create file: %w", err)
-	}
-	defer file.Close()
-
-	jsFileContent, _ := templateFS.ReadFile("templates/js/chart.tmpl.js")
-	chartTmplCSS, _ := templateFS.ReadFile("templates/css/chart.tmpl.css")
-	reportTmplCSS, _ := templateFS.ReadFile("templates/css/report.tmpl.css")
-	reportTmplJS, _ := templateFS.ReadFile("templates/js/report.tmpl.js")
-
-	// Create wrapper data for template
-	data := &ReporterData{
-		ReporterData:  r.concurrentComparison,
-		ChartTmplCSS:  string(chartTmplCSS),
-		ReportTmplCSS: string(reportTmplCSS),
-		ChartTmplJS:   string(jsFileContent),
-		ReportTmplJS:  string(reportTmplJS),
-	}
-
-	// Process JavaScript template with Go template engine
-	jsTmpl, err := template.New("chart.js").Parse(data.ChartTmplJS)
-	if err != nil {
-		return fmt.Errorf("failed to parse JavaScript template: %w", err)
-	}
-
-	// Execute JavaScript template
-	var jsBuffer bytes.Buffer
-	if err := jsTmpl.Execute(&jsBuffer, data); err != nil {
-		return fmt.Errorf("failed to execute JavaScript template: %w", err)
-	}
-
-	// Update the ChartTmplJS field with processed JavaScript
-	data.ChartTmplJS = jsBuffer.String()
-
-	// Execute template with wrapper data
-	if err := tmpl.Execute(file, data); err != nil {
-		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
 	return nil

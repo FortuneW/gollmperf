@@ -42,7 +42,11 @@ Run perf mode test to find performance limits in different concurrency levels`,
 
 				// Generate console report
 				r.AddNewMetrics(testCtx.Config.Test.Concurrency, metrics)
-				r.GenerateConsoleReport()
+				if runFlags.ShowTableOnConsole {
+					r.GenerateConsoleTableReport()
+				} else {
+					r.GenerateConsoleReport()
+				}
 
 				// Generate file report if requested
 				if err := r.GenerateFileReport(testCtx.Config.Output.Path, testCtx.Config.Output.Format); err != nil {
@@ -75,7 +79,8 @@ Run perf mode test to find performance limits in different concurrency levels`,
 
 func init() {
 	rootCmd.AddCommand(runCmd)
-	runCmd.Flags().BoolVarP(&runFlags.NoReport, "no-report", "", false, "Disable report generation")
+	runCmd.Flags().BoolVarP(&runFlags.NoReport, "no-report", "n", false, "Disable report generation")
+	runCmd.Flags().BoolVarP(&runFlags.ShowTableOnConsole, "show-table", "s", false, "Show table on console")
 	runCmd.Flags().BoolVarP(&runFlags.IsBatch, "batch", "b", false, "Run batch mode, for run all case in dataset")
 	runCmd.Flags().BoolVarP(&runFlags.IsPerf, "perf", "p", false, "Run perf mode, for find performance limits in different concurrency levels")
 	runCmd.Flags().StringVarP(&runFlags.BatchResultFile, "batch-result", "", "", "Batch results file path (output batch results to JSONL file)")

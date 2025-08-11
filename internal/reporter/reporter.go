@@ -1,6 +1,7 @@
 package reporter
 
 import (
+	"bytes"
 	"embed"
 	"encoding/json"
 	"fmt"
@@ -8,7 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
-	"bytes"
 
 	"github.com/FortuneW/gollmperf/internal/analyzer"
 	"github.com/FortuneW/qlog"
@@ -22,6 +22,7 @@ type ReporterData struct {
 	ReportTmplCSS string                `json:"-"`
 	ChartTmplCSS  string                `json:"-"`
 	ChartTmplJS   string                `json:"-"`
+	ReportTmplJS  string                `json:"-"`
 }
 
 // Reporter generates reports from analysis results
@@ -180,6 +181,7 @@ func (r *Reporter) GenerateHTMLReport(filename string) error {
 	jsFileContent, _ := templateFS.ReadFile("templates/js/chart.tmpl.js")
 	chartTmplCSS, _ := templateFS.ReadFile("templates/css/chart.tmpl.css")
 	reportTmplCSS, _ := templateFS.ReadFile("templates/css/report.tmpl.css")
+	reportTmplJS, _ := templateFS.ReadFile("templates/js/report.tmpl.js")
 
 	// Create wrapper data for template
 	data := &ReporterData{
@@ -187,20 +189,21 @@ func (r *Reporter) GenerateHTMLReport(filename string) error {
 		ChartTmplCSS:  string(chartTmplCSS),
 		ReportTmplCSS: string(reportTmplCSS),
 		ChartTmplJS:   string(jsFileContent),
+		ReportTmplJS:  string(reportTmplJS),
 	}
-	
+
 	// Process JavaScript template with Go template engine
 	jsTmpl, err := template.New("chart.js").Parse(data.ChartTmplJS)
 	if err != nil {
 		return fmt.Errorf("failed to parse JavaScript template: %w", err)
 	}
-	
+
 	// Execute JavaScript template
 	var jsBuffer bytes.Buffer
 	if err := jsTmpl.Execute(&jsBuffer, data); err != nil {
 		return fmt.Errorf("failed to execute JavaScript template: %w", err)
 	}
-	
+
 	// Update the ChartTmplJS field with processed JavaScript
 	data.ChartTmplJS = jsBuffer.String()
 

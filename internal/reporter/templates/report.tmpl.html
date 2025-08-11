@@ -17,52 +17,58 @@
 <body>
     <div class="container">
         <header>
-            <h1>goLLMPerf Performance Report</h1>
+            <div style="display: flex; justify-content: center; align-items: center; position: relative;">
+                <h1 id="report-title" style="margin: 0 auto;">goLLMPerf Performance Report</h1>
+                <div style="position: absolute; right: 0;">
+                    <button id="lang-en" class="lang-btn active">EN</button>
+                    <button id="lang-zh" class="lang-btn">中文</button>
+                </div>
+            </div>
         </header>
 
         <!-- Concurrent Test Comparison Display -->
         <div class="test-group">
             <div class="test-header">
-                <h2 class="test-title">Concurrent Test Comparison</h2>
+                <h2 class="test-title" data-i18n="concurrentTestComparison">Concurrent Test Comparison</h2>
             </div>
 
             <!-- Key Comparison Metrics -->
             <div class="metrics-dashboard">
 
                 <div class="metric-card">
-                    <div class="metric-category">Best Performance</div>
-                    <div class="metric-title">Highest QPS</div>
+                    <div class="metric-category" data-i18n="bestPerformance">Best Performance</div>
+                    <div class="metric-title" data-i18n="highestQPS">Highest QPS</div>
                     <div class="metric-value qps">{{if .ReporterData.GetBestQPS}}{{printf "%.2f"
                         .ReporterData.GetBestQPS.Metrics.QPS}}{{else}}N/A{{end}}</div>
                     <div class="detail-label">{{if .ReporterData.GetBestQPS}}at {{.ReporterData.GetBestQPS.Concurrency}}
-                        concurrency{{else}}No data available{{end}}</div>
+                        concurrency{{else}}<span data-i18n="noDataAvailable">No data available</span>{{end}}</div>
                 </div>
 
                 <div class="metric-card">
-                    <div class="metric-category">Best Throughput</div>
-                    <div class="metric-title">Highest Tokens per Second</div>
+                    <div class="metric-category" data-i18n="bestThroughput">Best Throughput</div>
+                    <div class="metric-title" data-i18n="highestTokensPerSecond">Highest Tokens per Second</div>
                     <div class="metric-value qps">{{if .ReporterData.GetBestTokensThroughput}}{{printf "%.1f"
                         .ReporterData.GetBestTokensThroughput.Metrics.TokensPerSecond}}{{else}}N/A{{end}}</div>
                     <div class="detail-label">{{if .ReporterData.GetBestTokensThroughput}}at
-                        {{.ReporterData.GetBestTokensThroughput.Concurrency}} concurrency{{else}}No data
-                        available{{end}}</div>
+                        {{.ReporterData.GetBestTokensThroughput.Concurrency}} concurrency{{else}}<span data-i18n="noDataAvailable">No data
+                        available</span>{{end}}</div>
                 </div>
 
                 <div class="metric-card">
-                    <div class="metric-category">E2E Latency Bottleneck</div>
-                    <div class="metric-title">Bottleneck Detected</div>
+                    <div class="metric-category" data-i18n="e2eLatencyBottleneck">E2E Latency Bottleneck</div>
+                    <div class="metric-title" data-i18n="bottleneckDetected">Bottleneck Detected</div>
                     <div class="metric-value latency">
                         {{if
                         .ReporterData.GetLatencyBottleneck}}{{.ReporterData.GetLatencyBottleneck.AverageLatencyMS}}{{else}}N/A{{end}}
                         ms</div>
                     <div class="detail-label">{{if .ReporterData.GetLatencyBottleneck}}at
-                        {{.ReporterData.GetLatencyBottleneck.Concurrency}} concurrency{{else}}No data available{{end}}
+                        {{.ReporterData.GetLatencyBottleneck.Concurrency}} concurrency{{else}}<span data-i18n="noDataAvailable">No data available</span>{{end}}
                     </div>
                 </div>
 
                 <div class="metric-card">
-                    <div class="metric-category">Recommended</div>
-                    <div class="metric-title">Optimal Concurrency</div>
+                    <div class="metric-category" data-i18n="recommended">Recommended</div>
+                    <div class="metric-title" data-i18n="optimalConcurrency">Optimal Concurrency</div>
                     <div class="metric-value" style="color: var(--primary-color); font-weight: 700;">
                         {{.ReporterData.GetRecommendedConcurrency.Concurrency}}</div>
                     <div class="detail-label">{{.ReporterData.GetRecommendedConcurrency.Reason}}</div>
@@ -72,31 +78,31 @@
 
             <!-- Detailed Comparison Table -->
             <div class="section">
-                <h3 class="section-title">Detailed Comparison</h3>
+                <h3 class="section-title" data-i18n="detailedComparison">Detailed Comparison</h3>
                 <div class="comparison-table-container">
                     <table class="comparison-table">
                         <thead>
                             <tr>
-                                <th rowspan="2">Concurrency</th>
-                                <th rowspan="2">Requests</th>
-                                <th rowspan="2">Duration</th>
-                                <th rowspan="2">QPS</th>
-                                <th rowspan="2">Tokens/sec</th>
-                                <th class="group-header" colspan="4">E2E Latency</th>
-                                <th class="group-header" colspan="4">First Token Latency</th>
-                                <th class="group-header" colspan="2">Token Metrics</th>
+                                <th rowspan="2" data-i18n="concurrency">Concurrency</th>
+                                <th rowspan="2" data-i18n="requests">Requests</th>
+                                <th rowspan="2" data-i18n="duration">Duration</th>
+                                <th rowspan="2" data-i18n="qps">QPS</th>
+                                <th rowspan="2" data-i18n="tokensPerSec">Tokens/sec</th>
+                                <th class="group-header" colspan="4" data-i18n="e2eLatency">E2E Latency</th>
+                                <th class="group-header" colspan="4" data-i18n="firstTokenLatency">First Token Latency</th>
+                                <th class="group-header" colspan="2" data-i18n="tokenMetrics">Token Metrics</th>
                             </tr>
                             <tr>
-                                <th>Average</th>
-                                <th>P50</th>
-                                <th>P90</th>
-                                <th>P99</th>
-                                <th>Average</th>
-                                <th>P50</th>
-                                <th>P90</th>
-                                <th>P99</th>
-                                <th>Request</th>
-                                <th>Response</th>
+                                <th data-i18n="average">Average</th>
+                                <th data-i18n="p50">P50</th>
+                                <th data-i18n="p90">P90</th>
+                                <th data-i18n="p99">P99</th>
+                                <th data-i18n="average">Average</th>
+                                <th data-i18n="p50">P50</th>
+                                <th data-i18n="p90">P90</th>
+                                <th data-i18n="p99">P99</th>
+                                <th data-i18n="request">Request</th>
+                                <th data-i18n="response">Response</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -137,7 +143,7 @@
 
             <!-- QPS and Tokens/sec Chart -->
             <div class="section">
-                <h3 class="section-title">Performance Metrics Chart</h3>
+                <h3 class="section-title" data-i18n="performanceMetricsChart">Performance Metrics Chart</h3>
                 <div class="chart-container">
                     <canvas id="performanceChart"></canvas>
                 </div>
@@ -145,14 +151,14 @@
 
             <!-- Error Statistics Table -->
             <div class="section">
-                <h3 class="section-title">Error Statistics</h3>
+                <h3 class="section-title" data-i18n="errorStatistics">Error Statistics</h3>
                 <div class="comparison-table-container">
                     <table class="comparison-table">
                         <thead>
                             <tr>
-                                <th>Concurrency</th>
-                                <th>Error Rate</th>
-                                <th>Error Type Distribution</th>
+                                <th data-i18n="concurrency">Concurrency</th>
+                                <th data-i18n="errorRate">Error Rate</th>
+                                <th data-i18n="errorTypeDistribution">Error Type Distribution</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -189,6 +195,9 @@
 
     <script>
         {{.ChartTmplJS}}
+    </script>
+    <script>
+        {{.ReportTmplJS}}
     </script>
 </body>
 

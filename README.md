@@ -3,13 +3,12 @@
 <img alt="gollmperf" src="./docs/assets/logos/logo1.png" width=50%>
 </p>
 
+# gollmperf - Professional LLM API Performance Testing Tool
+
 [![GitHub release](https://img.shields.io/github/release/fortuneW/gollmperf.svg?label=latest)](https://github.com/fortuneW/gollmperf/releases)
 [![License](https://img.shields.io/badge/license-Apache2.0-blue.svg)](./LICENSE.md)
 
-# gollmperf - Professional LLM Performance Testing Tool
-
 English | [中文](README_zh.md)
-
 
 ## Project Overview
 

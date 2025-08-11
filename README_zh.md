@@ -3,10 +3,10 @@
 <img alt="gollmperf" src="./docs/assets/logos/logo1.png" width=50%>
 </p>
 
+# gollmperf - 专业LLM API 性能测试工具
+
 [![GitHub release](https://img.shields.io/github/release/fortuneW/gollmperf.svg?label=latest)](https://github.com/fortuneW/gollmperf/releases)
 [![License](https://img.shields.io/badge/license-Apache2.0-blue.svg)](./LICENSE.md)
-
-# gollmperf - 专业LLM性能测试工具
 
 [English](README.md) | 中文
 

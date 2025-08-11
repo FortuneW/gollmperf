@@ -39,11 +39,7 @@ func (r *Reporter) GenerateConsoleTableReport() {
 	}
 
 	var data [][]string
-	// 存储每行对应的并发级别，用于后续样式设置
-	concurrencies := make([]int, 0, len(r.concurrentComparison.TestResults))
-
 	for _, result := range r.concurrentComparison.TestResults {
-		concurrencies = append(concurrencies, result.Concurrency)
 
 		// 检查是否有失败请求
 		reqsCell := fmt.Sprintf("%d", result.Metrics.TotalRequests)
@@ -87,5 +83,5 @@ func (r *Reporter) GenerateConsoleTableReport() {
 			return baseStyle.Foreground(lipgloss.Color("252"))
 		})
 
-	fmt.Println(t)
+	mlog.Infof("goLLMPerf Report:\n%s", t)
 }

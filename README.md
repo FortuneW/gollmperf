@@ -326,3 +326,9 @@ gollmperf provides a professional, accurate, and user-friendly solution for LLM 
 ## License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+<div align="center" style="text-align: center; display: flex; justify-content: center; align-items: center;">
+    <a href="#top">
+        <img src="https://img.shields.io/badge/Back%20to%20Top-000000?style=for-the-badge&logo=github&logoColor=white" alt="Back to Top">
+    </a>
+</div>

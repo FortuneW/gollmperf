@@ -332,3 +332,9 @@ gollmperf为LLM性能测试提供了一个专业、准确、易用的解决方�
 ## 许可证
 
 本项目采用Apache License 2.0许可证 - 详情请查看[LICENSE](LICENSE)文件。
+
+<div align="center" style="text-align: center; display: flex; justify-content: center; align-items: center;">
+    <a href="#top">
+        <img src="https://img.shields.io/badge/Back%20to%20Top-000000?style=for-the-badge&logo=github&logoColor=white" alt="Back to Top">
+    </a>
+</div>

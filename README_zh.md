@@ -3,13 +3,16 @@
 <img alt="gollmperf" src="./docs/assets/logos/logo1.png" width=50%>
 </p>
 
+[![GitHub release](https://img.shields.io/github/release/fortuneW/gollmperf.svg?label=latest)](https://github.com/fortuneW/gollmperf/releases)
+[![License](https://img.shields.io/badge/license-Apache2.0-blue.svg)](./LICENSE.md)
+
 # gollmperf - 专业LLM性能测试工具
 
 [English](README.md) | 中文
 
 ## 项目概述
 
-gollmperf是一个专业级的大语言模型(LLM)性能测试工具，旨在提供准确、全面的LLM性能评估。该工具支持多种LLM提供商，提供多维度性能指标，并具备企业级的测试能力。
+gollmperf是一个专业级的大语言模型(LLM) API 性能测试工具，旨在提供准确、全面的LLM性能评估。该工具支持多种LLM提供商，提供多维度性能指标，并具备企业级的测试能力。
 
 ## 核心功能特性
 

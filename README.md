@@ -3,13 +3,17 @@
 <img alt="gollmperf" src="./docs/assets/logos/logo1.png" width=50%>
 </p>
 
+[![GitHub release](https://img.shields.io/github/release/fortuneW/gollmperf.svg?label=latest)](https://github.com/fortuneW/gollmperf/releases)
+[![License](https://img.shields.io/badge/license-Apache2.0-blue.svg)](./LICENSE.md)
+
 # gollmperf - Professional LLM Performance Testing Tool
 
 English | [中文](README_zh.md)
 
+
 ## Project Overview
 
-gollmperf is a professional-grade Large Language Model (LLM) performance testing tool designed to provide accurate and comprehensive LLM performance evaluation. The tool supports multiple LLM providers, offers multi-dimensional performance metrics, and features enterprise-level testing capabilities.
+gollmperf is a professional-grade Large Language Model (LLM) API performance testing tool designed to provide accurate and comprehensive LLM performance evaluation. The tool supports multiple LLM providers, offers multi-dimensional performance metrics, and features enterprise-level testing capabilities.
 
 ## Core Features
 

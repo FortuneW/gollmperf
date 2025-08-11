@@ -5,7 +5,10 @@
 
 # gollmperf - Professional LLM API Performance Testing Tool
 
-[![GitHub release](https://img.shields.io/github/release/fortuneW/gollmperf.svg?label=latest)](https://github.com/fortuneW/gollmperf/releases)
+
+[![Build release](https://img.shields.io/github/release/fortuneW/gollmperf)](https://github.com/fortuneW/gollmperf/releases)
+[![Build Status](https://github.com/FortuneW/gollmperf/actions/workflows/go.yml/badge.svg)](https://github.com/fortuneW/gollmperf/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/fortuneW/gollmperf)](https://goreportcard.com/report/github.com/fortuneW/gollmperf)
 [![License](https://img.shields.io/badge/license-Apache2.0-blue.svg)](./LICENSE.md)
 
 English | [中文](README_zh.md)

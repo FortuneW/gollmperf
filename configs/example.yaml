@@ -15,7 +15,7 @@ test:
   perf_concurrency_group: [1,2,4,8,16,24,32,48,64]
 
   # Number of requests per concurrency level, 0 means infinite
-  requests_per_concurrency: 100
+  requests_per_concurrency: 10
   
   # Timeout for each request, 0 means infinite
   timeout: 30s

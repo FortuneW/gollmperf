@@ -22,8 +22,10 @@ case "$1" in
         ;;
 esac
 
-# Get git tag/description
-GIT_TAG=$(git describe --tags 2>/dev/null || echo "untagged")
+# Get git tag/description only if not already set
+if [ -z "$GIT_TAG" ]; then
+    GIT_TAG=$(git describe --tags 2>/dev/null || echo "untagged")
+fi
 
 # Function to copy assets to package directory
 copy_assets() {
@@ -103,7 +105,6 @@ build_and_package() {
         binary_name="gollmperf.exe"
     fi
     
-    go mod tidy
     # Build the binary without CGO
     if [ "$is_release" = "true" ]; then
         CGO_ENABLED=0 GOOS=$target_os GOARCH=$target_arch go build -o "releases/$binary_name" .
@@ -204,6 +205,10 @@ case $OS in
 esac
 
 # Build for single platform
-build_and_package "$OS" "$ARCH" "false"
-
-echo "Build completed successfully! Binary created: gollmperf"
+if [ "$PACK" = true ] ; then
+    build_and_package "$OS" "$ARCH" "true"
+    echo "Build completed successfully!"
+else
+    build_and_package "$OS" "$ARCH" "false"
+    echo "Build completed successfully! Only binary created: gollmperf!"
+fi

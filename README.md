@@ -38,6 +38,7 @@ gollmperf is a professional-grade Large Language Model (LLM) API performance tes
 - **Stability Testing**: Long-term continuous runtime testing
 - **Comparative Testing**: Multi-model performance comparison
 - **Scenario Testing**: Specific business scenario simulation
+- **Random Dataset Testing**: Generate random prompts with controlled token count for vLLM testing
 
 ### 4. Professional Metrics
 - **TTFT** (Time To First Token): First token latency
@@ -148,11 +149,40 @@ In performance testing mode, the tool will run tests across multiple concurrency
   -p, --perf                   Run perf mode, for find performance limits in different concurrency levels
   -P, --provider string        LLM provider (openai, qwen, etc.) (default "openai")
   -r, --report string          Report file path (output report to file)
+      --random-enable          Enable random dataset generation for vLLM
+      --random-input-len int   Input token length for random dataset
+      --random-output-len int  Output token length for random dataset
 ```
 
 ```bash
 # Command args override config file fields
 ./gollmperf run --config ./configs/example.yaml --model gpt-3.5-turbo --dataset ./examples/test_cases.jsonl --report result.json --format json
+```
+
+### Random Dataset Testing for vLLM
+
+For vLLM performance testing, you can use random dataset generation with controlled input/output token counts:
+
+```bash
+# Enable random dataset via command line
+./gollmperf run --config ./configs/example.yaml --random-enable --random-input-len 2000 --random-output-len 500
+
+# Or use environment variable for endpoint
+export LLM_API_ENDPOINT=http://localhost:63535/v1/chat/completions
+./gollmperf run --config ./configs/example.yaml --random-enable
+```
+
+When random dataset is enabled:
+- Prompts are generated with random English words to match the target input token count
+- The `max_tokens` parameter is set to the specified output token length
+- `ignore_eos` is set to true for vLLM compatibility
+- Each request uses a unique prompt to prevent caching effects
+
+**Test the random prompt generation:**
+
+```bash
+# Test random prompt generation without running full test
+./gollmperf test-random -e http://localhost:63535 -t 1000 -i 3 -v
 ```
 
 ### Batch Results Output
@@ -259,6 +289,19 @@ dataset:
   
   # Path to dataset file
   path: ./examples/test_cases.jsonl
+
+# Random dataset generation for vLLM (optional)
+# When enabled, generates random prompts with specified token count
+# This is useful for vLLM performance testing with controlled input/output sizes
+random_dataset_vllm:
+  # Enable random dataset generation
+  random-enable: false
+  
+  # Target input token length
+  random-input-len: 1000
+  
+  # Target output token length (sets max_tokens parameter)
+  random-output-len: 100
 
 # Output configuration
 output:

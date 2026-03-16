@@ -55,6 +55,11 @@ func GenerateDefaultConfig(filePath string) error {
 	config.Dataset.Type = "jsonl"
 	config.Dataset.Path = "./examples/test_cases.jsonl"
 
+	// Add default values for random_dataset_vllm
+	config.RandomDatasetVLLM.Enable = false
+	config.RandomDatasetVLLM.InputLength = 1000
+	config.RandomDatasetVLLM.OutputLength = 100
+
 	// Add default values for output
 	config.Output.Format = "html"
 	config.Output.Path = "./results/report.html"
@@ -80,10 +85,11 @@ var mlog = qlog.GetRLog("config")
 
 // Config represents the complete configuration for LLMPerf
 type Config struct {
-	Test    TestConfig    `yaml:"test"`
-	Model   ModelConfig   `yaml:"model"`
-	Dataset DatasetConfig `yaml:"dataset"`
-	Output  OutputConfig  `yaml:"output"`
+	Test              TestConfig              `yaml:"test"`
+	Model             ModelConfig             `yaml:"model"`
+	Dataset           DatasetConfig           `yaml:"dataset"`
+	RandomDatasetVLLM RandomDatasetVLLMConfig `yaml:"random_dataset_vllm"`
+	Output            OutputConfig            `yaml:"output"`
 }
 
 // TestConfig represents test configuration
@@ -119,6 +125,13 @@ type ModelConfig struct {
 type DatasetConfig struct {
 	Type string
 	Path string
+}
+
+// RandomDatasetVLLMConfig represents random dataset generation config for vLLM
+type RandomDatasetVLLMConfig struct {
+	Enable       bool `yaml:"random-enable" mapstructure:"random-enable"`
+	InputLength  int  `yaml:"random-input-len" mapstructure:"random-input-len"`
+	OutputLength int  `yaml:"random-output-len" mapstructure:"random-output-len"`
 }
 
 // OutputConfig represents output configuration
@@ -225,4 +238,7 @@ type ConfigOverrideFlags struct {
 	ReportFile      string
 	ReportFormat    string
 	BatchResultFile string
+	RandomEnable    bool
+	RandomInputLen  int
+	RandomOutputLen int
 }

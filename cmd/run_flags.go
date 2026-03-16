@@ -14,6 +14,10 @@ type RunFlags struct {
 	IsPerf             bool
 	NoReport           bool
 	ShowTableOnConsole bool
+	RandomEnable       bool
+	RandomEnableSet    bool // true if RandomEnable was explicitly set via command line
+	RandomInputLen     int
+	RandomOutputLen    int
 }
 
 var runFlags = &RunFlags{}

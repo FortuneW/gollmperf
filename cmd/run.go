@@ -20,6 +20,11 @@ var runCmd = &cobra.Command{
 Run stress test to find system stability;
 Run perf mode test to find performance limits in different concurrency levels`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// Check if random-enable flag was explicitly set
+		if cmd.Flags().Changed("random-enable") {
+			runFlags.RandomEnableSet = true
+		}
+
 		// Initialize test context
 		testCtx := InitializeTest(runFlags)
 
@@ -92,6 +97,9 @@ func init() {
 	runCmd.Flags().StringVarP(&runFlags.Endpoint, "endpoint", "e", "", "Endpoint")
 	runCmd.Flags().StringVarP(&runFlags.ReportFile, "report", "r", "", "Report file path (output report to file)")
 	runCmd.Flags().StringVarP(&runFlags.ReportFormat, "format", "f", "", "Report format (json, csv, html) (default as report file extension)")
+	runCmd.Flags().BoolVarP(&runFlags.RandomEnable, "random-enable", "", false, "Enable random dataset generation for vLLM")
+	runCmd.Flags().IntVarP(&runFlags.RandomInputLen, "random-input-len", "", 0, "Input token length for random dataset")
+	runCmd.Flags().IntVarP(&runFlags.RandomOutputLen, "random-output-len", "", 0, "Output token length for random dataset")
 }
 
 // runTest executes the test based on the test context and mode

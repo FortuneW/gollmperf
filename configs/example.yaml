@@ -64,6 +64,12 @@ dataset:
   # Path to dataset file
   path: ./examples/test_cases.jsonl
 
+# Random dataset generation for vllm
+random_dataset_vllm:
+  random-enable: false
+  random-input-len: 1000
+  random-output-len: 100
+
 # Output configuration
 output:
   # Output report file format (json, csv, html)

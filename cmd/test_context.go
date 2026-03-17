@@ -130,10 +130,11 @@ func generateRandomDataset(cfg *config.Config, systemPrompt string) []provider.A
 
 	return []provider.AnyParams{
 		{
-			"messages":   messages,
-			"max_tokens": cfg.RandomDatasetVLLM.OutputLength,
-			"ignore_eos": true,
-			"stream":     true,
+			"messages":               messages,
+			"max_tokens":             cfg.RandomDatasetVLLM.OutputLength,
+			"ignore_eos":             true,
+			"truncate_prompt_tokens": cfg.RandomDatasetVLLM.InputLength,
+			"stream":                 true,
 			"stream_options": map[string]interface{}{
 				"include_usage": true,
 			},

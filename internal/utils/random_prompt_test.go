@@ -260,7 +260,11 @@ func TestGetRandomPromptByTokenCount_MaxRetries(t *testing.T) {
 }
 
 func TestGetRandomPromptByTokenCount_RealAPI(t *testing.T) {
-	str, err := GetRandomPromptByTokenCount(os.Getenv("LLM_API_ENDPOINT"), 10000)
+	endpoint := os.Getenv("LLM_API_ENDPOINT")
+	if endpoint == "" {
+		t.Skip("LLM_API_ENDPOINT environment variable not set, skipping real API test")
+	}
+	str, err := GetRandomPromptByTokenCount(endpoint, 10000)
 	if err == nil {
 		// t.Logf("GetRandomPromptByTokenCount() success: %s", str)
 		_ = str
